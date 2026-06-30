@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Recebimento - Notas Fiscais</title>
+    <style>
+        /* Reset e Configurações Gerais */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            padding: 24px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .title-area h1 {
+            font-size: 22px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #111;
+        }
+
+        .title-area p {
+            font-size: 14px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .actions-header {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+
+        .btn-secondary {
+            background-color: #ffffff;
+            color: #333;
+            border: 1px solid #cccccc;
+        }
+
+        .btn-secondary:hover {
+            background-color: #f1f1f1;
+        }
+
+        .btn-primary {
+            background-color: #1e62be;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background-color: #154fa3;
+        }
+
+        /* Grid de Cards */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        .card h3 {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #888;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .card p {
+            font-size: 22px;
+            font-weight: 700;
+            color: #222;
+        }
+
+        /* Cores específicas dos números dos cards */
+        #txtTotalNotas { color: #1e62be; }
+        #txtNaoAcatadas { color: #dc3545; }
+        #txtAcatadas { color: #198754; }
+
+        /* Filtros */
+        .filters-section {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 14px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+
+        .filters-title {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .btn-clear {
+            background: transparent;
+            border: 1px solid #cccccc;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #444;
+            cursor: pointer;
+        }
+
+        .btn-clear:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* Área da Tabela / Conteúdo Principal */
+        .table-container {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        .table-info {
+            margin-bottom: 12px;
+        }
+
+        .table-info .count {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .table-info .instruction {
+            font-size: 12px;
+            color: #999;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Tabela Estilizada */
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            text-align: left;
+        }
+
+        .custom-table th {
+            background-color: #f8f9fa;
+            color: #555;
+            font-weight: 600;
+            padding: 10px 12px;
+            border-bottom: 1px solid #e2e8f0;
+            white-space: nowrap;
+        }
+
+        /* Ícones sutis de ordenação nos cabeçalhos */
+        .custom-table th .sort-icon {
+            color: #ccc;
+            font-size: 10px;
+            margin-left: 4px;
+        }
+        
+        .custom-table th .menu-icon {
+            color: #bbb;
+            margin-right: 4px;
+        }
+
+        .custom-table td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #333;
+            vertical-align: middle;
+        }
+
+        .custom-table tbody tr:hover {
+            background-color: #fcfcfc;
+        }
+
+        /* Badge de Status */
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        .badge-success {
+            background-color: #e6f7ed;
+            color: #198754;
+        }
+
+        /* Ações na Tabela */
+        .actions-cell {
+            display: flex;
+            gap: 12px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .btn-action {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header -->
+    <header>
+        <div class="title-area">
+            <h1>📋 Notas Fiscais</h1>
+            <p>Gerenciamento de recebimento</p>
+        </div>
+        <div class="actions-header">
+            <button id="btnExportar" class="btn btn-secondary">⬇ Exportar CSV</button>
+            <button id="btnNovaNota" class="btn btn-primary">+ Nova Nota Fiscal</button>
+        </div>
+    </header>
+
+    <!-- Cards de Indicadores -->
+    <section class="cards">
+        <div class="card">
+            <h3>Total de Notas</h3>
+            <p id="txtTotalNotas">1</p>
+        </div>
+        <div class="card">
+            <h3>Valor Total</h3>
+            <p id="txtValorTotal">R$ 1.119,13</p>
+        </div>
+        <div class="card">
+            <h3>Não Acatadas</h3>
+            <p id="txtNaoAcatadas">0</p>
+        </div>
+        <div class="card">
+            <h3>Acatadas</h3>
+            <p id="txtAcatadas">1</p>
+        </div>
+    </section>
+
+    <!-- Seção de Filtros -->
+    <section class="filters-section">
+        <div class="filters-title">
+            <span>▼ Filtros</span>
+        </div>
+        <button class="btn-clear">✕ Limpar filtros</button>
+    </section>
+
+    <!-- Listagem / Tabela -->
+    <section class="table-container">
+        <div class="table-info">
+            <div class="count">1 nota encontrada</div>
+            <div class="instruction">≡ Arraste os cabeçalhos para reordenar as colunas</div>
+        </div>
+
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th><span class="menu-icon">≡</span>Data <span class="sort-icon">↕</span></th>
+                    <th><span class="menu-icon">≡</span>Fornecedor <span class="sort-icon">↕</span></th>
+                    <th><span class="menu-icon">≡</span>NF <span class="sort-icon">↕</span></th>
+                    <th><span class="menu-icon">≡</span>Valor <span class="sort-icon">↕</span></th>
+                    <th><span class="menu-icon">≡</span>Chegada</th>
+                    <th><span class="menu-icon">≡</span>Saída</th>
+                    <th><span class="menu-icon">≡</span>Temp.</th>
+                    <th><span class="menu-icon">≡</span>Conferente <span class="sort-icon">↕</span></th>
+                    <th><span class="menu-icon">≡</span>Prevenção</th>
+                    <th><span class="menu-icon">≡</span>Status <span class="sort-icon">↕</span></th>
+                    <th><span class="menu-icon">≡</span>Observação</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>29/06/2026</td>
+                    <td>Apol</td>
+                    <td><strong>61.975</strong></td>
+                    <td><strong>R$ 1.119,13</strong></td>
+                    <td>07:06</td>
+                    <td>07:10</td>
+                    <td>-</td>
+                    <td>Amanda</td>
+                    <td>Lucas</td>
+                    <td><span class="badge badge-success">ACATADA</span></td>
+                    <td>-</td>
+                    <td class="actions-cell">
+                        <button class="btn-action" title="Editar">✏️</button>
+                        <button class="btn-action" title="Excluir">🗑️</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+</div>
+
+</body>
+</html>
