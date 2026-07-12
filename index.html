@@ -283,9 +283,14 @@
             border-radius: 6px;
             cursor: pointer;
             border: 1px solid #cbd5e1;
+            transition: transform 0.2s;
         }
 
-        /* --- MODAIS DE CONFIGURAÇÃO --- */
+        .thumb-img:hover {
+            transform: scale(1.1);
+        }
+
+        /* --- MODAIS PADRÕES --- */
         .modal {
             display: none;
             position: fixed;
@@ -312,6 +317,64 @@
         .modal-field label { display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px; }
         .modal-field input, .modal-field select { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; }
         .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+
+        /* --- MODAL DO PREVIEW DE IMAGEM --- */
+        .image-viewer-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.9);
+            z-index: 30000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .image-viewer-content {
+            position: relative;
+            max-width: 85%;
+            max-height: 75%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .image-viewer-content img {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 8px;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+            object-fit: contain;
+        }
+
+        .image-viewer-actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-close-viewer {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-change-image {
+            background: #4f83e2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+        }
 
         /* --- MODAL DA TELA DE PREVIEW DO RELATÓRIO (FULLSCREEN) --- */
         .preview-modal {
@@ -401,7 +464,6 @@
                 <input type="text" id="filtroFiscal" placeholder="Filtrar Fiscal...">
             </div>
             <div class="input-group" style="flex: 1.5;">
-                <!-- O JavaScript vai preencher esse select automaticamente com os setores existentes -->
                 <select id="filtroSetor">
                     <option value="">Todos os setores</option>
                 </select>
@@ -500,7 +562,18 @@
         </div>
     </div>
 
-    <!-- TELA DE PREVIEW DO RELATÓRIO (OUTRA TELA/MODAL FULLSCREEN) -->
+    <!-- MODAL DE VISUALIZAÇÃO GRANDE DA FOTO -->
+    <div id="imageViewerModal" class="image-viewer-modal">
+        <div class="image-viewer-content">
+            <img id="viewerImageTarget" src="" alt="Visualização expandida do item">
+        </div>
+        <div class="image-viewer-actions">
+            <button class="btn-change-image" id="btnViewerAlterar">Trocar Foto</button>
+            <button class="btn-close-viewer" id="btnViewerFechar">Fechar Visualização</button>
+        </div>
+    </div>
+
+    <!-- TELA DE PREVIEW DO RELATÓRIO (FULLSCREEN) -->
     <div id="previewModal" class="preview-modal">
         <div class="preview-header">
             <h2>Visualização Prévia do Relatório Informativo</h2>
@@ -525,11 +598,13 @@
 
             const modalEdicao = document.getElementById("editModal");
             const modalPreview = document.getElementById("previewModal");
+            const modalViewer = document.getElementById("imageViewerModal");
+            const viewerImageTarget = document.getElementById("viewerImageTarget");
             const fileInput = document.getElementById("globalFileInput");
             const tableBody = document.querySelector("#produtosTable tbody");
             const selectSetor = document.getElementById("filtroSetor");
 
-            // --- 1. SINCRONIZAÇÃO AUTOMÁTICA DOS SETORES ---
+            // --- SINCRONIZAÇÃO AUTOMÁTICA DOS SETORES ---
             function sincronizarFiltroSetores() {
                 const linhas = tableBody.querySelectorAll("tr");
                 let setoresExistentes = new Set();
@@ -539,10 +614,7 @@
                     if(setor) setoresExistentes.add(setor);
                 });
 
-                // Limpa opções antigas mantendo apenas a primeira
                 selectSetor.innerHTML = '<option value="">Todos os setores</option>';
-
-                // Adiciona os setores identificados na tabela de forma limpa
                 setoresExistentes.forEach(setor => {
                     const option = document.createElement("option");
                     option.value = setor;
@@ -551,7 +623,7 @@
                 });
             }
 
-            // --- 2. SISTEMA DE FILTRAGEM ---
+            // --- SISTEMA DE FILTRAGEM ---
             function executarFiltros() {
                 const fFiscal = document.getElementById("filtroFiscal").value.toLowerCase();
                 const fSetor = selectSetor.value.toLowerCase();
@@ -559,7 +631,7 @@
                 const linhas = tableBody.querySelectorAll("tr");
 
                 linhas.forEach(linha => {
-                    const txtFiscal = linha.querySelector(".cell-fiscal").innerText.toLowerCase();
+                    const txtFiscal = lineElement = linha.querySelector(".cell-fiscal").innerText.toLowerCase();
                     const txtSetor = linha.querySelector(".cell-setor").innerText.toLowerCase();
                     const txtCodigo = linha.querySelector(".cell-codigo").innerText.toLowerCase();
 
@@ -572,11 +644,11 @@
                 atualizarContadores();
             }
 
-            document.getElementById("filtroFiscal").addEventListener("input", executarFiltros);
+            document.getElementById("filtroFiscal").addEventListener("input", executingFilters => executarFiltros());
             selectSetor.addEventListener("change", executarFiltros);
             document.getElementById("filtroCodigo").addEventListener("input", executarFiltros);
 
-            // --- 3. ATUALIZAR CONTADORES ---
+            // --- ATUALIZAR CONTADORES ---
             function atualizarContadores() {
                 const linhas = tableBody.querySelectorAll("tr");
                 let total = 0, baixados = 0, pendentes = 0;
@@ -595,12 +667,12 @@
                 document.getElementById("cont-pendentes").innerText = pendentes;
             }
 
-            // --- 4. CONTROLE DE EVENTOS DA TABELA ---
+            // --- EVENTOS DA TABELA PRINCIPAL ---
             tableBody.addEventListener("click", function (event) {
                 const target = event.target;
                 const linha = target.closest("tr");
 
-                // Botão Editar
+                // Botão Editar dados básicos
                 if (target.classList.contains("btn-edit")) {
                     linhaSendoEditada = linha;
                     document.getElementById("modalFiscal").value = linha.querySelector(".cell-fiscal").innerText;
@@ -614,13 +686,20 @@
                     modalEdicao.style.display = "flex";
                 }
 
-                // Capturar Evento de Foto
-                if (target.classList.contains("btn-foto-trigger") || target.classList.contains("thumb-img")) {
+                // Ação ao interagir com o campo Foto
+                if (target.classList.contains("btn-foto-trigger")) {
                     celulaFotoSendoAlterada = target.closest("td");
                     fileInput.click();
                 }
 
-                // Botão Excluir
+                // Clique na miniatura da imagem (Abre Visualização Grande)
+                if (target.classList.contains("thumb-img")) {
+                    celulaFotoSendoAlterada = target.closest("td");
+                    viewerImageTarget.src = target.src;
+                    modalViewer.style.display = "flex";
+                }
+
+                // Botão Excluir item
                 if (target.classList.contains("btn-delete")) {
                     if (confirm("Deseja excluir este item?")) {
                         linha.remove();
@@ -629,16 +708,14 @@
                     }
                 }
 
-                // Botão Baixar -> Altera Status e Abre Nova Tela (Preview)
+                // Botão Baixar -> Gera Preview
                 if (target.classList.contains("btn-baixar")) {
                     linha.querySelector(".cell-status").innerHTML = `<span class="status-badge status-success">Baixado</span>`;
                     atualizarContadores();
 
-                    // Prepara e clona a tabela original limpa (sem botões de ação) para colocar no papel de preview
                     const tabelaOriginal = document.getElementById("produtosTable");
                     const tabelaClonada = tabelaOriginal.cloneNode(true);
                     
-                    // Remove a coluna de ações do clone para não sair feio no PDF
                     tabelaClonada.querySelectorAll("tr").forEach(row => {
                         if(row.lastElementChild) row.lastElementChild.remove();
                     });
@@ -646,26 +723,25 @@
                     document.getElementById("tabela-clonada-container").innerHTML = "";
                     document.getElementById("tabela-clonada-container").appendChild(tabelaClonada);
 
-                    // Abre a nova tela de visualização
                     modalPreview.style.display = "flex";
                 }
             });
 
-            // Processamento do upload da Imagem
+            // Processamento do upload da Imagem e conversão em miniatura
             fileInput.addEventListener("change", function () {
                 if (this.files && this.files[0] && celulaFotoSendoAlterada) {
                     const reader = new FileReader();
                     reader.onload = function (e) {
-                        celulaFotoSendoAlterada.innerHTML = `<img src="${e.target.result}" class="thumb-img" title="Clique para alterar">`;
+                        celulaFotoSendoAlterada.innerHTML = `<img src="${e.target.result}" class="thumb-img" title="Clique para ampliar / alterar">`;
                     };
                     reader.readAsDataURL(this.files[0]);
                 }
             });
 
-            // Fechar Modal Edição
+            // Fechar modal de edição
             document.getElementById("btnFecharModal").addEventListener("click", () => modalEdicao.style.display = "none");
 
-            // Salvar Modal Edição
+            // Salvar dados editados no modal
             document.getElementById("btnSalvarModal").addEventListener("click", function () {
                 if (linhaSendoEditada) {
                     linhaSendoEditada.querySelector(".cell-fiscal").innerText = document.getElementById("modalFiscal").value;
@@ -685,10 +761,17 @@
                 }
             });
 
-            // Fechar Tela de Preview
+            // CONTROLES DO VISUALIZADOR DE FOTO EXPANDIDA
+            document.getElementById("btnViewerFechar").addEventListener("click", () => modalViewer.style.display = "none");
+            document.getElementById("btnViewerAlterar").addEventListener("click", () => {
+                modalViewer.style.display = "none";
+                fileInput.click();
+            });
+
+            // Fechar Tela de Preview do Relatório
             document.getElementById("btnFecharPreview").addEventListener("click", () => modalPreview.style.display = "none");
 
-            // Disparar Execução Real do PDF de dentro da tela de Preview
+            // Disparar download real do PDF
             document.getElementById("btnConfirmarDownload").addEventListener("click", function () {
                 const elementoParaImprimir = document.getElementById("espaco-impressao-pdf");
                 const configPDF = {
@@ -700,11 +783,11 @@
                 };
 
                 html2pdf().set(configPDF).from(elementoParaImprimir).save().then(() => {
-                    modalPreview.style.display = "none"; // Fecha após o download iniciar
+                    modalPreview.style.display = "none";
                 });
             });
 
-            // Inicialização Perfeita
+            // Configuração Inicial de Carga
             sincronizarFiltroSetores();
             atualizarContadores();
         });
