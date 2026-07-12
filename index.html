@@ -490,7 +490,9 @@
                 <thead>
                     <tr>
                         <th>Fiscal</th>
+                        <th>Departamento</th>
                         <th>Setor</th>
+                        <th>Espécie</th>
                         <th>Código</th>
                         <th>Descrição</th>
                         <th class="center">Qtd</th>
@@ -502,7 +504,9 @@
                 <tbody>
                     <tr>
                         <td class="cell-fiscal">Celso</td>
+                        <td class="cell-depto">-</td>
                         <td class="cell-setor text-bold">Matéria-Prima Rotisserie</td>
+                        <td class="cell-especie">-</td>
                         <td class="cell-codigo">619205318003</td>
                         <td class="cell-desc text-muted">Produto não cadastrado</td>
                         <td class="cell-qtd center text-bold">1</td>
@@ -518,7 +522,9 @@
                     </tr>
                     <tr>
                         <td class="cell-fiscal">João carlos</td>
+                        <td class="cell-depto">-</td>
                         <td class="cell-setor text-bold">Perda Avaria</td>
+                        <td class="cell-especie">-</td>
                         <td class="cell-codigo">7891097018220</td>
                         <td class="cell-desc">Leite Uht Batavo 1l Semi Desnatado</td>
                         <td class="cell-qtd center text-bold">6</td>
@@ -544,7 +550,9 @@
         <div class="modal-content">
             <h3>Editar Produto</h3>
             <div class="modal-field"><label>Fiscal</label><input type="text" id="modalFiscal"></div>
+            <div class="modal-field"><label>Departamento</label><input type="text" id="modalDepto"></div>
             <div class="modal-field"><label>Setor</label><input type="text" id="modalSetor"></div>
+            <div class="modal-field"><label>Espécie</label><input type="text" id="modalEspecie"></div>
             <div class="modal-field"><label>Código</label><input type="text" id="modalCodigo"></div>
             <div class="modal-field"><label>Descrição</label><input type="text" id="modalDesc"></div>
             <div class="modal-field"><label>Quantidade</label><input type="text" id="modalQtd"></div>
@@ -628,10 +636,10 @@
                 const fFiscal = document.getElementById("filtroFiscal").value.toLowerCase();
                 const fSetor = selectSetor.value.toLowerCase();
                 const fCodigo = document.getElementById("filtroCodigo").value.toLowerCase();
-                const linhas = tableBody.querySelectorAll("tr");
+                const lines = tableBody.querySelectorAll("tr");
 
-                linhas.forEach(linha => {
-                    const txtFiscal = lineElement = linha.querySelector(".cell-fiscal").innerText.toLowerCase();
+                lines.forEach(linha => {
+                    const txtFiscal = linha.querySelector(".cell-fiscal").innerText.toLowerCase();
                     const txtSetor = linha.querySelector(".cell-setor").innerText.toLowerCase();
                     const txtCodigo = linha.querySelector(".cell-codigo").innerText.toLowerCase();
 
@@ -644,7 +652,7 @@
                 atualizarContadores();
             }
 
-            document.getElementById("filtroFiscal").addEventListener("input", executingFilters => executarFiltros());
+            document.getElementById("filtroFiscal").addEventListener("input", () => executarFiltros());
             selectSetor.addEventListener("change", executarFiltros);
             document.getElementById("filtroCodigo").addEventListener("input", executarFiltros);
 
@@ -676,7 +684,9 @@
                 if (target.classList.contains("btn-edit")) {
                     linhaSendoEditada = linha;
                     document.getElementById("modalFiscal").value = linha.querySelector(".cell-fiscal").innerText;
+                    document.getElementById("modalDepto").value = linha.querySelector(".cell-depto").innerText;
                     document.getElementById("modalSetor").value = linha.querySelector(".cell-setor").innerText;
+                    document.getElementById("modalEspecie").value = linha.querySelector(".cell-especie").innerText;
                     document.getElementById("modalCodigo").value = linha.querySelector(".cell-codigo").innerText;
                     document.getElementById("modalDesc").value = linha.querySelector(".cell-desc").innerText;
                     document.getElementById("modalQtd").value = linha.querySelector(".cell-qtd").innerText;
@@ -745,7 +755,9 @@
             document.getElementById("btnSalvarModal").addEventListener("click", function () {
                 if (linhaSendoEditada) {
                     linhaSendoEditada.querySelector(".cell-fiscal").innerText = document.getElementById("modalFiscal").value;
+                    linhaSendoEditada.querySelector(".cell-depto").innerText = document.getElementById("modalDepto").value;
                     linhaSendoEditada.querySelector(".cell-setor").innerText = document.getElementById("modalSetor").value;
+                    linhaSendoEditada.querySelector(".cell-especie").innerText = document.getElementById("modalEspecie").value;
                     linhaSendoEditada.querySelector(".cell-codigo").innerText = document.getElementById("modalCodigo").value;
                     linhaSendoEditada.querySelector(".cell-desc").innerText = document.getElementById("modalDesc").value;
                     linhaSendoEditada.querySelector(".cell-qtd").innerText = document.getElementById("modalQtd").value;
