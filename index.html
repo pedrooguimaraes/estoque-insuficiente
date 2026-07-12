@@ -66,22 +66,27 @@
             font-weight: 600;
         }
 
-        /* Botão posicionado no canto superior direito */
-        .btn-add-new {
-            background-color: #4f83e2;
-            color: white;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 2px 6px rgba(79, 131, 226, 0.2);
-            transition: background 0.2s;
+        .header-buttons {
+            display: flex;
+            gap: 10px;
         }
 
-        .btn-add-new:hover {
-            background-color: #3b6ec2;
+        .btn-header {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            color: #64748b;
+        }
+
+        .btn-header.active {
+            background: #fff;
+            color: #1e293b;
+            border-color: #cbd5e1;
+            font-weight: 600;
         }
 
         .main-card {
@@ -156,6 +161,16 @@
             color: #1e293b;
         }
 
+        .btn-refresh {
+            background: #fff;
+            border: 1px solid #cbd5e1;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #1e293b;
+            cursor: pointer;
+        }
+
         .table-container {
             width: 100%;
             overflow-x: auto;
@@ -190,12 +205,9 @@
             vertical-align: middle;
         }
 
-        /* Padronização absoluta para todas as descrições */
-        .cell-desc {
-            font-weight: 400 !important;
-            color: #334155 !important;
-            font-style: normal !important;
-            opacity: 1 !important;
+        .text-muted {
+            color: #94a3b8;
+            font-style: italic;
         }
 
         .text-bold {
@@ -232,7 +244,7 @@
         .btn-edit {
             background: none;
             border: none;
-            color: #4f83e2;
+            color: #b45309;
             font-weight: 600;
             cursor: pointer;
         }
@@ -240,7 +252,7 @@
         .btn-delete {
             background: none;
             border: none;
-            color: #ef4444;
+            color: #64748b;
             cursor: pointer;
             font-size: 16px;
         }
@@ -278,7 +290,7 @@
             transform: scale(1.1);
         }
 
-        /* Modais */
+        /* --- MODAIS PADRÕES --- */
         .modal {
             display: none;
             position: fixed;
@@ -306,25 +318,7 @@
         .modal-field input, .modal-field select { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; }
         .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
 
-        .btn-cancel {
-            background: #fff;
-            border: 1px solid #cbd5e1;
-            padding: 10px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 500;
-        }
-
-        .btn-save {
-            background: #4f83e2;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
+        /* --- MODAL DO PREVIEW DE IMAGEM --- */
         .image-viewer-modal {
             display: none;
             position: fixed;
@@ -382,6 +376,7 @@
             cursor: pointer;
         }
 
+        /* --- MODAL DA TELA DE PREVIEW DO RELATÓRIO (FULLSCREEN) --- */
         .preview-modal {
             display: none;
             position: fixed;
@@ -454,8 +449,10 @@
                 <p>Gerenciamento de Produtos</p>
             </div>
         </div>
-        <!-- Opção no canto superior direito para inclusão de novas informações -->
-        <button class="btn-add-new" id="btnNovoProduto">➕ Novo Registro</button>
+        <div class="header-buttons">
+            <button class="btn-header">Cadastrar</button>
+            <button class="btn-header active">Visualizar</button>
+        </div>
     </header>
 
     <main class="main-card">
@@ -484,6 +481,7 @@
                 <div class="badge-info">✅ Baixados <strong id="cont-baixados">0</strong></div>
                 <div class="badge-info">⏳ Pendentes <strong id="cont-pendentes">0</strong></div>
             </div>
+            <button class="btn-refresh" onclick="window.location.reload()">🔄 Atualizar</button>
         </div>
 
         <!-- TABELA PRINCIPAL -->
@@ -506,9 +504,9 @@
                         <td class="cell-fiscal">Celso</td>
                         <td class="cell-setor text-bold">Matéria-Prima Rotisserie</td>
                         <td class="cell-codigo">619205318003</td>
-                        <td class="cell-desc">Produto não cadastrado</td>
+                        <td class="cell-desc text-muted">Produto não cadastrado</td>
                         <td class="cell-qtd center text-bold">1</td>
-                        <td class="center cell-foto"><button class="btn-foto-trigger">📷</button></td>
+                        <td class="center"><button class="btn-foto-trigger">📷</button></td>
                         <td class="cell-status"><span class="status-badge status-pending">Pendente</span></td>
                         <td>
                             <div class="actions-cell">
@@ -524,7 +522,7 @@
                         <td class="cell-codigo">7891097018220</td>
                         <td class="cell-desc">Leite Uht Batavo 1l Semi Desnatado</td>
                         <td class="cell-qtd center text-bold">6</td>
-                        <td class="center cell-foto"><button class="btn-foto-trigger">📷</button></td>
+                        <td class="center"><button class="btn-foto-trigger">📷</button></td>
                         <td class="cell-status"><span class="status-badge status-pending">Pendente</span></td>
                         <td>
                             <div class="actions-cell">
@@ -541,10 +539,10 @@
 
     <input type="file" id="globalFileInput" accept="image/*" style="display: none;">
 
-    <!-- MODAL DE ADIÇÃO / EDIÇÃO -->
+    <!-- MODAL DE EDIÇÃO -->
     <div id="editModal" class="modal">
         <div class="modal-content">
-            <h3 id="modalTitle">Editar Produto</h3>
+            <h3>Editar Produto</h3>
             <div class="modal-field"><label>Fiscal</label><input type="text" id="modalFiscal"></div>
             <div class="modal-field"><label>Setor</label><input type="text" id="modalSetor"></div>
             <div class="modal-field"><label>Código</label><input type="text" id="modalCodigo"></div>
@@ -559,7 +557,7 @@
             </div>
             <div class="modal-actions">
                 <button class="btn-cancel" id="btnFecharModal">Cancelar</button>
-                <button class="btn-save" id="btnSalvarModal">Salvar Dados</button>
+                <button class="btn-save" id="btnSalvarModal">Salvar Alterações</button>
             </div>
         </div>
     </div>
@@ -567,7 +565,7 @@
     <!-- MODAL DE VISUALIZAÇÃO GRANDE DA FOTO -->
     <div id="imageViewerModal" class="image-viewer-modal">
         <div class="image-viewer-content">
-            <img id="viewerImageTarget" src="" alt="Visualização expandida">
+            <img id="viewerImageTarget" src="" alt="Visualização expandida do item">
         </div>
         <div class="image-viewer-actions">
             <button class="btn-change-image" id="btnViewerAlterar">Trocar Foto</button>
@@ -597,10 +595,8 @@
         document.addEventListener("DOMContentLoaded", function () {
             let linhaSendoEditada = null;
             let celulaFotoSendoAlterada = null;
-            let modoFormulario = "EDITAR";
 
             const modalEdicao = document.getElementById("editModal");
-            const modalTitle = document.getElementById("modalTitle");
             const modalPreview = document.getElementById("previewModal");
             const modalViewer = document.getElementById("imageViewerModal");
             const viewerImageTarget = document.getElementById("viewerImageTarget");
@@ -608,16 +604,14 @@
             const tableBody = document.querySelector("#produtosTable tbody");
             const selectSetor = document.getElementById("filtroSetor");
 
+            // --- SINCRONIZAÇÃO AUTOMÁTICA DOS SETORES ---
             function sincronizarFiltroSetores() {
                 const linhas = tableBody.querySelectorAll("tr");
                 let setoresExistentes = new Set();
 
                 linhas.forEach(linha => {
-                    const celulaSetor = linha.querySelector(".cell-setor");
-                    if(celulaSetor) {
-                        const setor = celulaSetor.innerText.trim();
-                        if(setor) setoresExistentes.add(setor);
-                    }
+                    const setor = linha.querySelector(".cell-setor").innerText.trim();
+                    if(setor) setoresExistentes.add(setor);
                 });
 
                 selectSetor.innerHTML = '<option value="">Todos os setores</option>';
@@ -629,6 +623,7 @@
                 });
             }
 
+            // --- SISTEMA DE FILTRAGEM ---
             function executarFiltros() {
                 const fFiscal = document.getElementById("filtroFiscal").value.toLowerCase();
                 const fSetor = selectSetor.value.toLowerCase();
@@ -636,7 +631,7 @@
                 const linhas = tableBody.querySelectorAll("tr");
 
                 linhas.forEach(linha => {
-                    const txtFiscal = linha.querySelector(".cell-fiscal").innerText.toLowerCase();
+                    const txtFiscal = lineElement = linha.querySelector(".cell-fiscal").innerText.toLowerCase();
                     const txtSetor = linha.querySelector(".cell-setor").innerText.toLowerCase();
                     const txtCodigo = linha.querySelector(".cell-codigo").innerText.toLowerCase();
 
@@ -649,10 +644,11 @@
                 atualizarContadores();
             }
 
-            document.getElementById("filtroFiscal").addEventListener("input", executarFiltros);
+            document.getElementById("filtroFiscal").addEventListener("input", executingFilters => executarFiltros());
             selectSetor.addEventListener("change", executarFiltros);
             document.getElementById("filtroCodigo").addEventListener("input", executarFiltros);
 
+            // --- ATUALIZAR CONTADORES ---
             function atualizarContadores() {
                 const linhas = tableBody.querySelectorAll("tr");
                 let total = 0, baixados = 0, pendentes = 0;
@@ -671,31 +667,14 @@
                 document.getElementById("cont-pendentes").innerText = pendentes;
             }
 
-            // Botão Superior Direito para Inclusão de Informações
-            document.getElementById("btnNovoProduto").addEventListener("click", function() {
-                modoFormulario = "CRIAR";
-                modalTitle.innerText = "Adicionar Novo Registro";
-                
-                document.getElementById("modalFiscal").value = "";
-                document.getElementById("modalSetor").value = "";
-                document.getElementById("modalCodigo").value = "";
-                document.getElementById("modalDesc").value = "";
-                document.getElementById("modalQtd").value = "1";
-                document.getElementById("modalStatus").value = "Pendente";
-                
-                modalEdicao.style.display = "flex";
-            });
-
+            // --- EVENTOS DA TABELA PRINCIPAL ---
             tableBody.addEventListener("click", function (event) {
                 const target = event.target;
                 const linha = target.closest("tr");
-                if (!linha) return;
 
+                // Botão Editar dados básicos
                 if (target.classList.contains("btn-edit")) {
-                    modoFormulario = "EDITAR";
-                    modalTitle.innerText = "Editar Produto";
                     linhaSendoEditada = linha;
-
                     document.getElementById("modalFiscal").value = linha.querySelector(".cell-fiscal").innerText;
                     document.getElementById("modalSetor").value = linha.querySelector(".cell-setor").innerText;
                     document.getElementById("modalCodigo").value = linha.querySelector(".cell-codigo").innerText;
@@ -707,17 +686,20 @@
                     modalEdicao.style.display = "flex";
                 }
 
+                // Ação ao interagir com o campo Foto
                 if (target.classList.contains("btn-foto-trigger")) {
                     celulaFotoSendoAlterada = target.closest("td");
                     fileInput.click();
                 }
 
+                // Clique na miniatura da imagem (Abre Visualização Grande)
                 if (target.classList.contains("thumb-img")) {
                     celulaFotoSendoAlterada = target.closest("td");
                     viewerImageTarget.src = target.src;
                     modalViewer.style.display = "flex";
                 }
 
+                // Botão Excluir item
                 if (target.classList.contains("btn-delete")) {
                     if (confirm("Deseja excluir este item?")) {
                         linha.remove();
@@ -726,6 +708,7 @@
                     }
                 }
 
+                // Botão Baixar -> Gera Preview
                 if (target.classList.contains("btn-baixar")) {
                     linha.querySelector(".cell-status").innerHTML = `<span class="status-badge status-success">Baixado</span>`;
                     atualizarContadores();
@@ -744,6 +727,7 @@
                 }
             });
 
+            // Processamento do upload da Imagem e conversão em miniatura
             fileInput.addEventListener("change", function () {
                 if (this.files && this.files[0] && celulaFotoSendoAlterada) {
                     const reader = new FileReader();
@@ -754,61 +738,40 @@
                 }
             });
 
+            // Fechar modal de edição
             document.getElementById("btnFecharModal").addEventListener("click", () => modalEdicao.style.display = "none");
 
+            // Salvar dados editados no modal
             document.getElementById("btnSalvarModal").addEventListener("click", function () {
-                const fiscalVal = document.getElementById("modalFiscal").value;
-                const setorVal = document.getElementById("modalSetor").value;
-                const codigoVal = document.getElementById("modalCodigo").value;
-                const descVal = document.getElementById("modalDesc").value;
-                const qtdVal = document.getElementById("modalQtd").value;
-                const statusVal = document.getElementById("modalStatus").value;
+                if (linhaSendoEditada) {
+                    linhaSendoEditada.querySelector(".cell-fiscal").innerText = document.getElementById("modalFiscal").value;
+                    linhaSendoEditada.querySelector(".cell-setor").innerText = document.getElementById("modalSetor").value;
+                    linhaSendoEditada.querySelector(".cell-codigo").innerText = document.getElementById("modalCodigo").value;
+                    linhaSendoEditada.querySelector(".cell-desc").innerText = document.getElementById("modalDesc").value;
+                    linhaSendoEditada.querySelector(".cell-qtd").innerText = document.getElementById("modalQtd").value;
 
-                const badgeHtml = statusVal === "Baixado" 
-                    ? `<span class="status-badge status-success">Baixado</span>`
-                    : `<span class="status-badge status-pending">Pendente</span>`;
+                    const novoStatus = document.getElementById("modalStatus").value;
+                    linhaSendoEditada.querySelector(".cell-status").innerHTML = novoStatus === "Baixado" 
+                        ? `<span class="status-badge status-success">Baixado</span>`
+                        : `<span class="status-badge status-pending">Pendente</span>`;
 
-                if (modoFormulario === "EDITAR" && linhaSendoEditada) {
-                    linhaSendoEditada.querySelector(".cell-fiscal").innerText = fiscalVal;
-                    linhaSendoEditada.querySelector(".cell-setor").innerText = setorVal;
-                    linhaSendoEditada.querySelector(".cell-codigo").innerText = codigoVal;
-                    linhaSendoEditada.querySelector(".cell-desc").innerText = descVal;
-                    linhaSendoEditada.querySelector(".cell-qtd").innerText = qtdVal;
-                    linhaSendoEditada.querySelector(".cell-status").innerHTML = badgeHtml;
-                } else if (modoFormulario === "CRIAR") {
-                    const novaLinha = document.createElement("tr");
-                    novaLinha.innerHTML = `
-                        <td class="cell-fiscal">${fiscalVal}</td>
-                        <td class="cell-setor text-bold">${setorVal}</td>
-                        <td class="cell-codigo">${codigoVal}</td>
-                        <td class="cell-desc">${descVal}</td>
-                        <td class="cell-qtd center text-bold">${qtdVal}</td>
-                        <td class="center cell-foto"><button class="btn-foto-trigger">📷</button></td>
-                        <td class="cell-status">${badgeHtml}</td>
-                        <td>
-                            <div class="actions-cell">
-                                <button class="btn-edit">✏️ Editar</button>
-                                <button class="btn-delete">🗑️</button>
-                                <button class="btn-baixar">✓ Baixar</button>
-                            </div>
-                        </td>
-                    `;
-                    tableBody.appendChild(novaLinha);
+                    modalEdicao.style.display = "none";
+                    sincronizarFiltroSetores();
+                    atualizarContadores();
                 }
-
-                modalEdicao.style.display = "none";
-                sincronizarFiltroSetores();
-                atualizarContadores();
             });
 
+            // CONTROLES DO VISUALIZADOR DE FOTO EXPANDIDA
             document.getElementById("btnViewerFechar").addEventListener("click", () => modalViewer.style.display = "none");
             document.getElementById("btnViewerAlterar").addEventListener("click", () => {
                 modalViewer.style.display = "none";
                 fileInput.click();
             });
 
+            // Fechar Tela de Preview do Relatório
             document.getElementById("btnFecharPreview").addEventListener("click", () => modalPreview.style.display = "none");
 
+            // Disparar download real do PDF
             document.getElementById("btnConfirmarDownload").addEventListener("click", function () {
                 const elementoParaImprimir = document.getElementById("espaco-impressao-pdf");
                 const configPDF = {
@@ -824,6 +787,7 @@
                 });
             });
 
+            // Configuração Inicial de Carga
             sincronizarFiltroSetores();
             atualizarContadores();
         });
