@@ -93,6 +93,17 @@
             background-color: #3b6ecc;
         }
 
+        .btn-header.btn-baixar-top {
+            background-color: #f0fdf4;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+            font-weight: 600;
+        }
+
+        .btn-header.btn-baixar-top:hover {
+            background-color: #dcfce7;
+        }
+
         .main-card {
             background: #ffffff;
             border-radius: 12px;
@@ -199,11 +210,6 @@
             vertical-align: middle;
         }
 
-        .text-muted {
-            color: #94a3b8;
-            font-style: italic;
-        }
-
         .text-bold {
             font-weight: 600;
             color: #1e293b;
@@ -249,17 +255,6 @@
             color: #64748b;
             cursor: pointer;
             font-size: 16px;
-        }
-
-        .btn-baixar {
-            background-color: #f0fdf4;
-            color: #15803d;
-            border: 1px solid #bbf7d0;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
         }
 
         .btn-foto-trigger {
@@ -447,6 +442,7 @@
             </div>
         </div>
         <div class="header-buttons">
+            <button class="btn-header btn-baixar-top" id="btnBaixarTop">✓ Baixar</button>
             <button class="btn-header btn-add" id="btnIncluirLinha">➕ Incluir Linha</button>
         </div>
     </header>
@@ -509,7 +505,6 @@
                             <div class="actions-cell">
                                 <button class="btn-edit">✏️ Editar</button>
                                 <button class="btn-delete">🗑️</button>
-                                <button class="btn-baixar">✓ Baixar</button>
                             </div>
                         </td>
                     </tr>
@@ -526,7 +521,6 @@
                             <div class="actions-cell">
                                 <button class="btn-edit">✏️ Editar</button>
                                 <button class="btn-delete">🗑️</button>
-                                <button class="btn-baixar">✓ Baixar</button>
                             </div>
                         </td>
                     </tr>
@@ -611,7 +605,7 @@
                 let deptosExistentes = new Set();
 
                 linhas.forEach(linha => {
-                    const depto = linha.querySelector(".cell-depto").innerText.trim();
+                    const depto = inline_depto = linha.querySelector(".cell-depto").innerText.trim();
                     if(depto) deptosExistentes.add(depto);
                 });
 
@@ -684,6 +678,31 @@
                 modalEdicao.style.display = "flex";
             });
 
+            // --- BOTÃO BAIXAR SUPERIOR (GERA PREVIEW DO RELATÓRIO) ---
+            document.getElementById("btnBaixarTop").addEventListener("click", function () {
+                // Altera o status de todas as linhas VISÍVEIS para Baixado ao clicar no botão global
+                const linhas = tableBody.querySelectorAll("tr");
+                linhas.forEach(linha => {
+                    if (linha.style.display !== "none") {
+                        linha.querySelector(".cell-status").innerHTML = `<span class="status-badge status-success">Baixado</span>`;
+                    }
+                });
+                atualizarContadores();
+
+                const tabelaOriginal = document.getElementById("produtosTable");
+                const tabelaClonada = tabelaOriginal.cloneNode(true);
+                
+                // Remove a coluna de ações no PDF gerado
+                tabelaClonada.querySelectorAll("tr").forEach(row => {
+                    if(row.lastElementChild) row.lastElementChild.remove();
+                });
+
+                document.getElementById("tabela-clonada-container").innerHTML = "";
+                document.getElementById("tabela-clonada-container").appendChild(tabelaClonada);
+
+                modalPreview.style.display = "flex";
+            });
+
             // --- EVENTOS DA TABELA PRINCIPAL ---
             tableBody.addEventListener("click", function (event) {
                 const target = event.target;
@@ -728,24 +747,6 @@
                         sincronizarFiltroDeptos();
                         atualizarContadores();
                     }
-                }
-
-                // Botão Baixar -> Gera Preview
-                if (target.classList.contains("btn-baixar")) {
-                    linha.querySelector(".cell-status").innerHTML = `<span class="status-badge status-success">Baixado</span>`;
-                    atualizarContadores();
-
-                    const tabelaOriginal = document.getElementById("produtosTable");
-                    const tabelaClonada = tabelaOriginal.cloneNode(true);
-                    
-                    tabelaClonada.querySelectorAll("tr").forEach(row => {
-                        if(row.lastElementChild) row.lastElementChild.remove();
-                    });
-
-                    document.getElementById("tabela-clonada-container").innerHTML = "";
-                    document.getElementById("tabela-clonada-container").appendChild(tabelaClonada);
-
-                    modalPreview.style.display = "flex";
                 }
             });
 
@@ -800,7 +801,6 @@
                             <div class="actions-cell">
                                 <button class="btn-edit">✏️ Editar</button>
                                 <button class="btn-delete">🗑️</button>
-                                <button class="btn-baixar">✓ Baixar</button>
                             </div>
                         </td>
                     `;
