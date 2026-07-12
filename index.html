@@ -443,8 +443,10 @@
             </div>
         </div>
         <div class="header-buttons">
-            <button class="btn-header btn-baixar-top" id="btnBaixarTop">✓ Baixar</button>
-            <button class="btn-header btn-add" id="btnIncluirLinha">➕ Incluir Linha</button>
+            <!-- NOME ALTERADO: de '✓ Baixar' para '🖨️ Imprimir/Gerar Arquivo PDF' -->
+            <button class="btn-header btn-baixar-top" id="btnBaixarTop">🖨️ Imprimir/Gerar Arquivo PDF</button>
+            <!-- NOME ALTERADO: de '➕ Incluir Linha' para '➕ Adicionar Estoque' -->
+            <button class="btn-header btn-add" id="btnIncluirLinha">➕ Adicionar Estoque</button>
         </div>
     </header>
 
@@ -481,7 +483,7 @@
             <table id="produtosTable">
                 <thead>
                     <tr>
-                        <th>Data</th> <!-- Nova Coluna Inserida aqui -->
+                        <th>Data</th>
                         <th>Prevenção</th>
                         <th>Departamento</th>
                         <th>Documento</th>
@@ -496,7 +498,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="cell-data">12/07/2026</td> <!-- Data exemplo preenchida -->
+                        <td class="cell-data">12/07/2026</td>
                         <td class="cell-prev">Celso</td>
                         <td class="cell-depto text-bold">Matéria-Prima Rotisserie</td>
                         <td class="cell-doc">-</td>
@@ -514,7 +516,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td class="cell-data">12/07/2026</td> <!-- Data exemplo preenchida -->
+                        <td class="cell-data">12/07/2026</td>
                         <td class="cell-prev">João carlos</td>
                         <td class="cell-depto text-bold">Perda Avaria</td>
                         <td class="cell-doc">-</td>
@@ -542,7 +544,7 @@
     <div id="editModal" class="modal">
         <div class="modal-content">
             <h3 id="modalTitulo">Editar Produto</h3>
-            <div class="modal-field"><label>Data</label><input type="date" id="modalData"></div> <!-- Campo Data incluído -->
+            <div class="modal-field"><label>Data</label><input type="date" id="modalData"></div>
             <div class="modal-field"><label>Prevenção</label><input type="text" id="modalPrev"></div>
             <div class="modal-field"><label>Departamento</label><input type="text" id="modalDepto"></div>
             <div class="modal-field"><label>Documento</label><input type="text" id="modalDoc"></div>
@@ -608,16 +610,14 @@
             const tableBody = document.querySelector("#produtosTable tbody");
             const selectDepto = document.getElementById("filtroDepto");
 
-            // Auxiliar para formatar data do input type="date" (AAAA-MM-DD) para padrão brasileiro (DD/MM/AAAA)
             function formatarDataParaBR(dataString) {
                 if(!dataString) return "-";
-                if(dataString.includes("/")) return dataString; // Já formatada
+                if(dataString.includes("/")) return dataString;
                 const partes = dataString.split("-");
                 if(partes.length === 3) return `${partes[2]}/${partes[1]}/${partes[0]}`;
                 return dataString;
             }
 
-            // Auxiliar para formatar padrão brasileiro (DD/MM/AAAA) para input type="date" (AAAA-MM-DD)
             function formatarDataParaInput(dataString) {
                 if(!dataString || dataString === "-") return "";
                 const partes = dataString.split("/");
@@ -625,7 +625,6 @@
                 return "";
             }
 
-            // --- SINCRONIZAÇÃO AUTOMÁTICA DOS DEPARTAMENTOS NO FILTRO ---
             function sincronizarFiltroDeptos() {
                 const linhas = tableBody.querySelectorAll("tr");
                 let deptosExistentes = new Set();
@@ -644,7 +643,6 @@
                 });
             }
 
-            // --- SISTEMA DE FILTRAGEM ---
             function ejecutarFiltros() {
                 const fPrev = document.getElementById("filtroPrev").value.toLowerCase();
                 const fDepto = selectDepto.value.toLowerCase();
@@ -669,7 +667,6 @@
             selectDepto.addEventListener("change", ejecutarFiltros);
             document.getElementById("filtroCodigo").addEventListener("input", ejecutarFiltros);
 
-            // --- ATUALIZAR CONTADORES ---
             function atualizarContadores() {
                 const linhas = tableBody.querySelectorAll("tr");
                 let total = 0, baixados = 0, pendentes = 0;
@@ -688,10 +685,10 @@
                 document.getElementById("cont-pendentes").innerText = pendentes;
             }
 
-            // --- INCLUIR NOVA LINHA (BOTAO SUPERIOR DIREITO) ---
+            // O ID foi mantido, mas aciona a ação de "Adicionar Estoque"
             document.getElementById("btnIncluirLinha").addEventListener("click", function() {
                 modoFormulario = "INCLUIR";
-                modalTitulo.innerText = "Incluir Novo Registro";
+                modalTitulo.innerText = "Adicionar Novo Estoque";
                 
                 document.getElementById("modalData").value = "";
                 document.getElementById("modalPrev").value = "";
@@ -706,7 +703,7 @@
                 modalEdicao.style.display = "flex";
             });
 
-            // --- BOTÃO BAIXAR SUPERIOR (GERA PREVIEW DO RELATÓRIO) ---
+            // O ID foi mantido, mas agora representa a impressão e geração de PDF
             document.getElementById("btnBaixarTop").addEventListener("click", function () {
                 const linhas = tableBody.querySelectorAll("tr");
                 linhas.forEach(linha => {
@@ -729,7 +726,6 @@
                 modalPreview.style.display = "flex";
             });
 
-            // --- EVENTOS DA TABELA PRINCIPAL ---
             tableBody.addEventListener("click", function (event) {
                 const target = event.target;
                 const linha = target.closest("tr");
@@ -862,7 +858,6 @@
                 });
             });
 
-            // Execuções iniciais obrigatórias
             sincronizarFiltroDeptos();
             atualizarContadores();
         });
