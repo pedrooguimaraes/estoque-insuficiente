@@ -66,6 +66,7 @@
             font-weight: 600;
         }
 
+        /* Botão posicionado no canto superior direito */
         .btn-add-new {
             background-color: #4f83e2;
             color: white;
@@ -189,6 +190,14 @@
             vertical-align: middle;
         }
 
+        /* Padronização absoluta para todas as descrições */
+        .cell-desc {
+            font-weight: 400 !important;
+            color: #334155 !important;
+            font-style: normal !important;
+            opacity: 1 !important;
+        }
+
         .text-bold {
             font-weight: 600;
             color: #1e293b;
@@ -269,7 +278,7 @@
             transform: scale(1.1);
         }
 
-        /* --- MODAIS PADRÕES --- */
+        /* Modais */
         .modal {
             display: none;
             position: fixed;
@@ -316,7 +325,6 @@
             font-weight: 600;
         }
 
-        /* --- MODAL DO PREVIEW DE IMAGEM --- */
         .image-viewer-modal {
             display: none;
             position: fixed;
@@ -374,7 +382,6 @@
             cursor: pointer;
         }
 
-        /* --- MODAL DA TELA DE PREVIEW DO RELATÓRIO (FULLSCREEN) --- */
         .preview-modal {
             display: none;
             position: fixed;
@@ -447,7 +454,7 @@
                 <p>Gerenciamento de Produtos</p>
             </div>
         </div>
-        <!-- Botão superior direito solicitado -->
+        <!-- Opção no canto superior direito para inclusão de novas informações -->
         <button class="btn-add-new" id="btnNovoProduto">➕ Novo Registro</button>
     </header>
 
@@ -552,7 +559,7 @@
             </div>
             <div class="modal-actions">
                 <button class="btn-cancel" id="btnFecharModal">Cancelar</button>
-                <button class="btn-save" id="btnSalvarModal">Salvar Alterações</button>
+                <button class="btn-save" id="btnSalvarModal">Salvar Dados</button>
             </div>
         </div>
     </div>
@@ -590,7 +597,7 @@
         document.addEventListener("DOMContentLoaded", function () {
             let linhaSendoEditada = null;
             let celulaFotoSendoAlterada = null;
-            let modoFormulario = "EDITAR"; // Pode ser "CRIAR" ou "EDITAR"
+            let modoFormulario = "EDITAR";
 
             const modalEdicao = document.getElementById("editModal");
             const modalTitle = document.getElementById("modalTitle");
@@ -601,7 +608,6 @@
             const tableBody = document.querySelector("#produtosTable tbody");
             const selectSetor = document.getElementById("filtroSetor");
 
-            // --- 1. SINCRONIZAÇÃO AUTOMÁTICA DOS SETORES ---
             function sincronizarFiltroSetores() {
                 const linhas = tableBody.querySelectorAll("tr");
                 let setoresExistentes = new Set();
@@ -623,7 +629,6 @@
                 });
             }
 
-            // --- 2. SISTEMA DE FILTRAGEM ---
             function executarFiltros() {
                 const fFiscal = document.getElementById("filtroFiscal").value.toLowerCase();
                 const fSetor = selectSetor.value.toLowerCase();
@@ -644,11 +649,10 @@
                 atualizarContadores();
             }
 
-            document.getElementById("filtroFiscal").addEventListener("input", executarFiltros);
+            document.getElementById("filtroFiscal").addEventListener("input", executingFiltros);
             selectSetor.addEventListener("change", executarFiltros);
             document.getElementById("filtroCodigo").addEventListener("input", executarFiltros);
 
-            // --- 3. ATUALIZAR CONTADORES ---
             function atualizarContadores() {
                 const linhas = tableBody.querySelectorAll("tr");
                 let total = 0, baixados = 0, pendentes = 0;
@@ -667,12 +671,11 @@
                 document.getElementById("cont-pendentes").innerText = pendentes;
             }
 
-            // --- 4. CONFIGURAÇÃO PARA INCLUSÃO DE NOVO PRODUTO ---
+            // Ação do Botão Superior Direito (Novo Registro)
             document.getElementById("btnNovoProduto").addEventListener("click", function() {
                 modoFormulario = "CRIAR";
                 modalTitle.innerText = "Adicionar Novo Registro";
                 
-                // Limpa campos do modal
                 document.getElementById("modalFiscal").value = "";
                 document.getElementById("modalSetor").value = "";
                 document.getElementById("modalCodigo").value = "";
@@ -683,13 +686,11 @@
                 modalEdicao.style.display = "flex";
             });
 
-            // --- 5. EVENTOS DA TABELA PRINCIPAL ---
             tableBody.addEventListener("click", function (event) {
                 const target = event.target;
                 const linha = target.closest("tr");
                 if (!linha) return;
 
-                // Botão Editar dados básicos
                 if (target.classList.contains("btn-edit")) {
                     modoFormulario = "EDITAR";
                     modalTitle.innerText = "Editar Produto";
@@ -706,20 +707,17 @@
                     modalEdicao.style.display = "flex";
                 }
 
-                // Ação ao interagir com o campo Foto (Botão de Câmera)
                 if (target.classList.contains("btn-foto-trigger")) {
                     celulaFotoSendoAlterada = target.closest("td");
                     fileInput.click();
                 }
 
-                // Clique na miniatura da imagem (Abre Visualização Grande)
                 if (target.classList.contains("thumb-img")) {
                     celulaFotoSendoAlterada = target.closest("td");
                     viewerImageTarget.src = target.src;
                     modalViewer.style.display = "flex";
                 }
 
-                // Botão Excluir item
                 if (target.classList.contains("btn-delete")) {
                     if (confirm("Deseja excluir este item?")) {
                         linha.remove();
@@ -728,7 +726,6 @@
                     }
                 }
 
-                // Botão Baixar -> Altera Status e Gera Preview
                 if (target.classList.contains("btn-baixar")) {
                     linha.querySelector(".cell-status").innerHTML = `<span class="status-badge status-success">Baixado</span>`;
                     atualizarContadores();
@@ -747,7 +744,6 @@
                 }
             });
 
-            // Processamento do upload da Imagem e conversão em miniatura
             fileInput.addEventListener("change", function () {
                 if (this.files && this.files[0] && celulaFotoSendoAlterada) {
                     const reader = new FileReader();
@@ -758,10 +754,8 @@
                 }
             });
 
-            // Fechar modal de edição
             document.getElementById("btnFecharModal").addEventListener("click", () => modalEdicao.style.display = "none");
 
-            // Salvar dados (Salva Edição OU Cria um Novo dependendo do modo)
             document.getElementById("btnSalvarModal").addEventListener("click", function () {
                 const fiscalVal = document.getElementById("modalFiscal").value;
                 const setorVal = document.getElementById("modalSetor").value;
@@ -782,7 +776,6 @@
                     linhaSendoEditada.querySelector(".cell-qtd").innerText = qtdVal;
                     linhaSendoEditada.querySelector(".cell-status").innerHTML = badgeHtml;
                 } else if (modoFormulario === "CRIAR") {
-                    // Monta dinamicamente a nova linha da planilha
                     const novaLinha = document.createElement("tr");
                     novaLinha.innerHTML = `
                         <td class="cell-fiscal">${fiscalVal}</td>
@@ -808,17 +801,14 @@
                 atualizarContadores();
             });
 
-            // CONTROLES DO VISUALIZADOR DE FOTO EXPANDIDA
             document.getElementById("btnViewerFechar").addEventListener("click", () => modalViewer.style.display = "none");
             document.getElementById("btnViewerAlterar").addEventListener("click", () => {
                 modalViewer.style.display = "none";
                 fileInput.click();
             });
 
-            // Fechar Tela de Preview do Relatório
             document.getElementById("btnFecharPreview").addEventListener("click", () => modalPreview.style.display = "none");
 
-            // Disparar download real do PDF
             document.getElementById("btnConfirmarDownload").addEventListener("click", function () {
                 const elementoParaImprimir = document.getElementById("espaco-impressao-pdf");
                 const configPDF = {
@@ -834,7 +824,6 @@
                 });
             });
 
-            // Configuração Inicial de Carga
             sincronizarFiltroSetores();
             atualizarContadores();
         });
