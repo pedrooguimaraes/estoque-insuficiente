@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estoque Insuficiente - 047 - Lins Junqueira</title>
+    <title>Estoque Insuficiente - 047</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Biblioteca para geração do PDF -->
+    <!-- Biblioteca nativa para geração do arquivo PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
@@ -183,7 +183,7 @@
             overflow-x: auto;
             border-radius: 8px;
             border: 1px solid #e2e8f0;
-            -webkit-overflow-scrolling: touch; /* Rolagem suave no iOS */
+            -webkit-overflow-scrolling: touch;
         }
 
         table {
@@ -191,7 +191,7 @@
             border-collapse: collapse;
             text-align: left;
             font-size: 13.5px;
-            white-space: nowrap; /* Evita que o texto quebre linhas bizarramente na tabela */
+            white-space: nowrap;
         }
 
         th {
@@ -248,7 +248,7 @@
         .btn-edit {
             background: none;
             border: none;
-            color: #b45309;
+            color: #4f83e2;
             font-weight: 600;
             cursor: pointer;
             font-size: 13.5px;
@@ -257,9 +257,10 @@
         .btn-delete {
             background: none;
             border: none;
-            color: #64748b;
+            color: #ef4444;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 14px;
+            font-weight: 600;
         }
 
         .btn-foto-trigger {
@@ -280,11 +281,7 @@
             transition: transform 0.2s;
         }
 
-        .thumb-img:hover {
-            transform: scale(1.1);
-        }
-
-        /* --- MODAIS PADRÕES --- */
+        /* Modais */
         .modal {
             display: none;
             position: fixed;
@@ -303,9 +300,9 @@
             padding: 25px;
             border-radius: 12px;
             width: 420px;
-            max-width: 90%; /* Responsivo para telas pequenas */
+            max-width: 90%;
             max-height: 90vh;
-            overflow-y: auto; /* Permite rolagem interna se a tela for muito baixa */
+            overflow-y: auto;
             box-shadow: 0 4px 25px rgba(0,0,0,0.2);
         }
 
@@ -318,7 +315,7 @@
         .btn-cancel { background: #fff; border: 1px solid #cbd5e1; color: #64748b; padding: 10px 15px; border-radius: 6px; cursor: pointer; }
         .btn-save { background: #4f83e2; border: none; color: white; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: 600; }
 
-        /* --- MODAL DO PREVIEW DE IMAGEM --- */
+        /* Modal do Preview de Imagem */
         .image-viewer-modal {
             display: none;
             position: fixed;
@@ -333,50 +330,18 @@
             flex-direction: column;
         }
 
-        .image-viewer-content {
-            position: relative;
-            max-width: 85%;
-            max-height: 75%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
         .image-viewer-content img {
-            max-width: 100%;
-            max-height: 80vh;
+            max-width: 85%;
+            max-height: 75vh;
             border-radius: 8px;
-            box-shadow: 0 4px 30px rgba(0,0,0,0.5);
             object-fit: contain;
         }
 
-        .image-viewer-actions {
-            margin-top: 20px;
-            display: flex;
-            gap: 15px;
-        }
+        .image-viewer-actions { margin-top: 20px; display: flex; gap: 15px; }
+        .btn-close-viewer { background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;}
+        .btn-change-image { background: #4f83e2; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;}
 
-        .btn-close-viewer {
-            background: #ef4444;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .btn-change-image {
-            background: #4f83e2;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        /* --- MODAL DA TELA DE PREVIEW DO RELATÓRIO (FULLSCREEN) --- */
+        /* Modal do Preview do PDF */
         .preview-modal {
             display: none;
             position: fixed;
@@ -402,10 +367,9 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        .preview-header h2 { font-size: 18px; font-weight: 600; }
         .preview-container {
             flex: 1;
-            padding: 40px;
+            padding: 30px;
             display: flex;
             justify-content: center;
         }
@@ -413,102 +377,47 @@
         .preview-paper {
             background: #ffffff;
             width: 100%;
-            max-width: 1000px;
+            max-width: 1050px;
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.05);
         }
 
-        .btn-download-now {
-            background-color: #10b981;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
+        .btn-download-now { background-color: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: 600; cursor: pointer; }
+        .btn-close-preview { background: none; border: 1px solid #cbd5e1; color: white; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
+
+        /* Estilização para a tabela impressa dentro do PDF */
+        #espaco-impressao-pdf table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        #espaco-impressao-pdf th {
+            background-color: #1e293b !important;
+            color: #ffffff !important;
+            padding: 10px;
+            font-size: 11px;
+        }
+        #espaco-impressao-pdf td {
+            padding: 10px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 11px;
         }
 
-        .btn-close-preview {
-            background: none;
-            border: 1px solid #cbd5e1;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        /* ========================================================
-           ### OTIMIZAÇÕES EXCLUSIVAS PARA DISPOSITIVOS MÓVEIS ###
-           ======================================================== */
+        /* Responsividade Mobile */
         @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-
-            header {
-                flex-direction: column;
-                align-items: flex-start;
-                padding: 15px;
-                gap: 15px;
-            }
-
-            .header-buttons {
-                width: 100%;
-                justify-content: space-between;
-            }
-
-            .btn-header {
-                flex: 1; /* Faz os botões dividirem o espaço igualmente */
-                padding: 12px 8px;
-                font-size: 13px;
-                text-align: center;
-                display: inline-flex;
-                justify-content: center;
-                align-items: center;
-            }
-
-            .main-card {
-                padding: 15px;
-            }
-
-            .filters-row {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .input-group {
-                width: 100%;
-            }
-
-            .summary-row {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-
-            .badges-container {
-                width: 100%;
-                justify-content: space-between;
-            }
-
-            .badge-info {
-                flex: 1;
-                text-align: center;
-                padding: 6px 4px;
-                font-size: 12px;
-            }
-
-            .preview-header {
-                flex-direction: column;
-                gap: 10px;
-                padding: 15px;
-                text-align: center;
-            }
-
-            .preview-container {
-                padding: 10px;
-            }
+            body { padding: 10px; }
+            header { flex-direction: column; align-items: flex-start; padding: 15px; gap: 15px; }
+            .header-buttons { width: 100%; justify-content: space-between; }
+            .btn-header { flex: 1; padding: 12px 8px; font-size: 13px; text-align: center; display: inline-flex; justify-content: center; align-items: center; }
+            .main-card { padding: 15px; }
+            .filters-row { flex-direction: column; gap: 10px; }
+            .input-group { width: 100%; }
+            .summary-row { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .badges-container { width: 100%; justify-content: space-between; }
+            .badge-info { flex: 1; text-align: center; padding: 6px 4px; font-size: 12px; }
+            .preview-header { flex-direction: column; gap: 10px; padding: 15px; text-align: center; }
+            .preview-container { padding: 10px; }
         }
     </style>
 </head>
@@ -523,14 +432,12 @@
             </div>
         </div>
         <div class="header-buttons">
-            <button class="btn-header btn-baixar-top" id="btnBaixarTop">🖨️ Imprimir/PDF</button>
+            <button class="btn-header btn-baixar-top" id="btnBaixarTop">🖨️ Imprimir/Gerar Arquivo PDF</button>
             <button class="btn-header btn-add" id="btnIncluirLinha">➕ Adicionar Estoque</button>
         </div>
     </header>
 
     <main class="main-card">
-        
-        <!-- BARRA DE FILTROS -->
         <div class="filters-row">
             <div class="input-group">
                 <span>🔍</span>
@@ -547,7 +454,6 @@
             </div>
         </div>
 
-        <!-- PLACAS DE RESUMO -->
         <div class="summary-row">
             <div class="badges-container">
                 <div class="badge-info">Total <strong id="cont-total">0</strong></div>
@@ -556,7 +462,6 @@
             </div>
         </div>
 
-        <!-- TABELA PRINCIPAL COM ROLAGEM SUAVE NO CELULAR -->
         <div class="table-container">
             <table id="produtosTable">
                 <thead>
@@ -589,7 +494,7 @@
                         <td>
                             <div class="actions-cell">
                                 <button class="btn-edit">✏️ Editar</button>
-                                <button class="btn-delete">🗑️</button>
+                                <button class="btn-delete">🗑️ Deletar</button>
                             </div>
                         </td>
                     </tr>
@@ -607,7 +512,7 @@
                         <td>
                             <div class="actions-cell">
                                 <button class="btn-edit">✏️ Editar</button>
-                                <button class="btn-delete">🗑️</button>
+                                <button class="btn-delete">🗑️ Deletar</button>
                             </div>
                         </td>
                     </tr>
@@ -644,10 +549,10 @@
         </div>
     </div>
 
-    <!-- MODAL DE FOTO -->
+    <!-- MODAL DE VISUALIZAÇÃO DE IMAGEM -->
     <div id="imageViewerModal" class="image-viewer-modal">
         <div class="image-viewer-content">
-            <img id="viewerImageTarget" src="" alt="Visualização expandida">
+            <img id="viewerImageTarget" src="" alt="Foto expandida">
         </div>
         <div class="image-viewer-actions">
             <button class="btn-change-image" id="btnViewerAlterar">Trocar Foto</button>
@@ -658,17 +563,17 @@
     <!-- PREVIEW TELA CHEIA DO PDF -->
     <div id="previewModal" class="preview-modal">
         <div class="preview-header">
-            <h2>Visualização do Relatório</h2>
+            <h2>Visualização Antecipada do Relatório</h2>
             <div style="display: flex; gap: 10px;">
-                <button class="btn-close-preview" id="btnFecharPreview">❌ Fechar</button>
-                <button class="btn-download-now" id="btnConfirmarDownload">📥 Baixar PDF</button>
+                <button class="btn-close-preview" id="btnFecharPreview">❌ Cancelar</button>
+                <button class="btn-download-now" id="btnConfirmarDownload">📥 Confirmar e Baixar PDF</button>
             </div>
         </div>
         <div class="preview-container">
             <div class="preview-paper" id="espaco-impressao-pdf">
-                <h1 style="color: #1e293b; margin-bottom: 5px; font-size: 18px;">Estoque Insuficiente - 047</h1>
-                <p style="color: #64748b; font-size: 12px; margin-bottom: 20px;">Gerado em: 12/07/2026</p>
-                <div id="tabela-clonada-container" style="overflow-x: auto;"></div>
+                <h1 style="color: #1e293b; margin-bottom: 5px; font-size: 20px;">Estoque Insuficiente - 047</h1>
+                <p style="color: #64748b; font-size: 13px; margin-bottom: 25px;">Relatório de Gerenciamento de Controle de Estoque</p>
+                <div id="tabela-clonada-container" style="width: 100%;"></div>
             </div>
         </div>
     </div>
@@ -706,12 +611,10 @@
             function sincronizarFiltroDeptos() {
                 const linhas = tableBody.querySelectorAll("tr");
                 let deptosExistentes = new Set();
-
                 linhas.forEach(linha => {
                     const depto = linha.querySelector(".cell-depto").innerText.trim();
                     if(depto) deptosExistentes.add(depto);
                 });
-
                 selectDepto.innerHTML = '<option value="">Todos os departamentos</option>';
                 deptosExistentes.forEach(depto => {
                     const option = document.createElement("option");
@@ -741,7 +644,7 @@
                 atualizarContadores();
             }
 
-            document.getElementById("filtroPrev").addEventListener("input", () => ejecutarFiltros());
+            document.getElementById("filtroPrev").addEventListener("input", ejecutarFiltros);
             selectDepto.addEventListener("change", ejecutarFiltros);
             document.getElementById("filtroCodigo").addEventListener("input", ejecutarFiltros);
 
@@ -763,23 +666,7 @@
                 document.getElementById("cont-pendentes").innerText = pendentes;
             }
 
-            document.getElementById("btnIncluirLinha").addEventListener("click", function() {
-                modoFormulario = "INCLUIR";
-                modalTitulo.innerText = "Adicionar Novo Estoque";
-                
-                document.getElementById("modalData").value = "";
-                document.getElementById("modalPrev").value = "";
-                document.getElementById("modalDepto").value = "";
-                document.getElementById("modalDoc").value = "";
-                document.getElementById("modalEspecie").value = "";
-                document.getElementById("modalCodigo").value = "";
-                document.getElementById("modalDesc").value = "";
-                document.getElementById("modalQtd").value = "1";
-                document.getElementById("modalStatus").value = "Pendente";
-
-                modalEdicao.style.display = "flex";
-            });
-
+            // AÇÃO DO BOTÃO IMPRIMIR / PDF
             document.getElementById("btnBaixarTop").addEventListener("click", function () {
                 const linhas = tableBody.querySelectorAll("tr");
                 linhas.forEach(linha => {
@@ -789,6 +676,7 @@
                 });
                 atualizarContadores();
 
+                // Clonar tabela estruturada para o PDF limpando os botões de controle
                 const tabelaOriginal = document.getElementById("produtosTable");
                 const tabelaClonada = tabelaOriginal.cloneNode(true);
                 
@@ -802,6 +690,38 @@
                 modalPreview.style.display = "flex";
             });
 
+            document.getElementById("btnConfirmarDownload").addEventListener("click", function () {
+                const elementoParaImprimir = document.getElementById("espaco-impressao-pdf");
+                const configPDF = {
+                    margin: 12,
+                    filename: 'relatorio-estoque-047.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, useCORS: true },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+                };
+
+                html2pdf().set(configPDF).from(elementoParaImprimir).save().then(() => {
+                    modalPreview.style.display = "none";
+                });
+            });
+
+            document.getElementById("btnFecharPreview").addEventListener("click", () => modalPreview.style.display = "none");
+
+            document.getElementById("btnIncluirLinha").addEventListener("click", function() {
+                modoFormulario = "INCLUIR";
+                modalTitulo.innerText = "Adicionar Novo Estoque";
+                document.getElementById("modalData").value = "";
+                document.getElementById("modalPrev").value = "";
+                document.getElementById("modalDepto").value = "";
+                document.getElementById("modalDoc").value = "";
+                document.getElementById("modalEspecie").value = "";
+                document.getElementById("modalCodigo").value = "";
+                document.getElementById("modalDesc").value = "";
+                document.getElementById("modalQtd").value = "1";
+                document.getElementById("modalStatus").value = "Pendente";
+                modalEdicao.style.display = "flex";
+            });
+
             tableBody.addEventListener("click", function (event) {
                 const target = event.target;
                 const linha = target.closest("tr");
@@ -813,9 +733,9 @@
 
                     document.getElementById("modalData").value = formatarDataParaInput(linha.querySelector(".cell-data").innerText);
                     document.getElementById("modalPrev").value = linha.querySelector(".cell-prev").innerText;
-                    document.getElementById("modalDepto").value = inlineData = linha.querySelector(".cell-depto").innerText;
+                    document.getElementById("modalDepto").value = linha.querySelector(".cell-depto").innerText;
                     document.getElementById("modalDoc").value = linha.querySelector(".cell-doc").innerText;
-                    document.getElementById("modalEspecie").value = linha.querySelector(".cell-especie").innerText;
+                    document.getElementById("modalEspecie").value = inlineData = linha.querySelector(".cell-especie").innerText;
                     document.getElementById("modalCodigo").value = linha.querySelector(".cell-codigo").innerText;
                     document.getElementById("modalDesc").value = linha.querySelector(".cell-desc").innerText;
                     document.getElementById("modalQtd").value = linha.querySelector(".cell-qtd").innerText;
@@ -899,7 +819,7 @@
                         <td>
                             <div class="actions-cell">
                                 <button class="btn-edit">✏️ Editar</button>
-                                <button class="btn-delete">🗑️</button>
+                                <button class="btn-delete">🗑️ Deletar</button>
                             </div>
                         </td>
                     `;
@@ -915,23 +835,6 @@
             document.getElementById("btnViewerAlterar").addEventListener("click", () => {
                 modalViewer.style.display = "none";
                 fileInput.click();
-            });
-
-            document.getElementById("btnFecharPreview").addEventListener("click", () => modalPreview.style.display = "none");
-
-            document.getElementById("btnConfirmarDownload").addEventListener("click", function () {
-                const elementoParaImprimir = document.getElementById("espaco-impressao-pdf");
-                const configPDF = {
-                    margin: 15,
-                    filename: 'relatorio-estoque-insuficiente.pdf',
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2, useCORS: true },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-                };
-
-                html2pdf().set(configPDF).from(elementoParaImprimir).save().then(() => {
-                    modalPreview.style.display = "none";
-                });
             });
 
             sincronizarFiltroDeptos();
