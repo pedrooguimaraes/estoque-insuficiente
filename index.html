@@ -2,349 +2,53 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProdControl - Gerenciamento de Produtos</title>
+    <title>ProdControl Funcional</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
-
-        body {
-            background-color: #f4f6f9;
-            color: #333;
-            padding: 20px;
-        }
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #ffffff;
-            padding: 15px 30px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            margin-bottom: 20px;
-        }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .logo-icon {
-            background-color: #4f83e2;
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
-
-        .logo-text h1 {
-            font-size: 18px;
-            font-weight: 700;
-            color: #1e293b;
-        }
-
-        .logo-text p {
-            font-size: 11px;
-            text-transform: uppercase;
-            color: #94a3b8;
-            letter-spacing: 0.5px;
-            font-weight: 600;
-        }
-
-        .header-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn-header {
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            border: 1px solid #e2e8f0;
-            background: #fff;
-            color: #64748b;
-        }
-
-        .btn-header.active {
-            background: #fff;
-            color: #1e293b;
-            border-color: #cbd5e1;
-            font-weight: 600;
-        }
-
-        .main-card {
-            background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
-            padding: 20px;
-            border: 1px solid #edf2f7;
-        }
-
-        .filters-row {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .input-group {
-            position: relative;
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .input-group span {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #94a3b8;
-            font-size: 14px;
-        }
-
-        .input-group input, .input-group select {
-            width: 100%;
-            padding: 10px 12px 10px 35px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 14px;
-            color: #334155;
-            background-color: #fff;
-            outline: none;
-        }
-
-        .input-group select {
-            padding-left: 15px;
-            appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 12px center;
-            background-size: 16px;
-        }
-
-        .checkbox-group {
-            display: flex;
-            gap: 15px;
-            font-size: 14px;
-            color: #64748b;
-            align-items: center;
-        }
-
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .badges-container {
-            display: flex;
-            gap: 10px;
-        }
-
-        .badge-info {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            color: #475569;
-            font-weight: 500;
-        }
-
-        .badge-info strong {
-            color: #1e293b;
-        }
-
-        .btn-refresh {
-            background: #fff;
-            border: 1px solid #cbd5e1;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 13px;
-            color: #1e293b;
-            cursor: pointer;
-        }
-
-        .table-container {
-            width: 100%;
-            overflow-x: auto;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            font-size: 13.5px;
-        }
-
-        th {
-            background-color: #1e293b;
-            color: #f8fafc;
-            text-transform: uppercase;
-            font-size: 11px;
-            font-weight: 600;
-            padding: 14px 16px;
-        }
-
-        .center {
-            text-align: center;
-        }
-
-        td {
-            padding: 16px;
-            border-bottom: 1px solid #f1f5f9;
-            color: #334155;
-        }
-
-        .text-muted {
-            color: #94a3b8;
-            font-style: italic;
-        }
-
-        .text-bold {
-            font-weight: 600;
-            color: #1e293b;
-        }
-
-        .status-pending {
-            background-color: #fffbeb;
-            color: #b45309;
-            border: 1px solid #fef3c7;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .actions-cell {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .btn-edit {
-            background: none;
-            border: none;
-            color: #b45309;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .btn-delete {
-            background: none;
-            border: none;
-            color: #64748b;
-            cursor: pointer;
-        }
-
-        .btn-baixar {
-            background-color: #f0fdf4;
-            color: #15803d;
-            border: 1px solid #bbf7d0;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .thumb-img {
-            width: 32px;
-            height: 32px;
-            object-fit: cover;
-            border-radius: 4px;
-            cursor: pointer;
-            border: 1px solid #cbd5e1;
-        }
-
-        /* --- ESTILOS DO MODAL DE EDIÇÃO --- */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.4);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .modal-content {
-            background-color: #fff;
-            padding: 25px;
-            border-radius: 12px;
-            width: 450px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-        }
-
-        .modal-content h3 {
-            margin-bottom: 20px;
-            color: #1e293b;
-        }
-
-        .modal-field {
-            margin-bottom: 15px;
-        }
-
-        .modal-field label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: #475569;
-            margin-bottom: 6px;
-        }
-
-        .modal-field input, .modal-field select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            outline: none;
-        }
-
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .btn-cancel {
-            padding: 10px 15px;
-            border: 1px solid #cbd5e1;
-            background: #fff;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        .btn-save {
-            padding: 10px 15px;
-            background: #4f83e2;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: #f4f6f9; color: #333; padding: 20px; }
+        header { display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 15px 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 20px; }
+        .logo-container { display: flex; align-items: center; gap: 12px; }
+        .logo-icon { background-color: #4f83e2; color: white; width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .logo-text h1 { font-size: 18px; font-weight: 700; color: #1e293b; }
+        .logo-text p { font-size: 11px; text-transform: uppercase; color: #94a3b8; letter-spacing: 0.5px; font-weight: 600; }
+        .header-buttons { display: flex; gap: 10px; }
+        .btn-header { padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; border: 1px solid #e2e8f0; background: #fff; color: #64748b; }
+        .btn-header.active { background: #fff; color: #1e293b; border-color: #cbd5e1; font-weight: 600; }
+        .main-card { background: #ffffff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); padding: 20px; border: 1px solid #edf2f7; }
+        .filters-row { display: flex; gap: 15px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; }
+        .input-group { position: relative; flex: 1; min-width: 200px; }
+        .input-group span { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 14px; }
+        .input-group input, .input-group select { width: 100%; padding: 10px 12px 10px 35px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; color: #334155; background-color: #fff; outline: none; }
+        .checkbox-group { display: flex; gap: 15px; font-size: 14px; color: #64748b; align-items: center; }
+        .summary-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .badges-container { display: flex; gap: 10px; }
+        .badge-info { background: #f8fafc; border: 1px solid #e2e8f0; padding: 6px 14px; border-radius: 20px; font-size: 13px; color: #475569; font-weight: 500; }
+        .badge-info strong { color: #1e293b; }
+        .btn-refresh { background: #fff; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 6px; font-size: 13px; color: #1e293b; cursor: pointer; }
+        .table-container { width: 100%; overflow-x: auto; border-radius: 8px; border: 1px solid #e2e8f0; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13.5px; }
+        th { background-color: #1e293b; color: #f8fafc; text-transform: uppercase; font-size: 11px; font-weight: 600; padding: 14px 16px; }
+        .center { text-align: center; }
+        td { padding: 16px; border-bottom: 1px solid #f1f5f9; color: #334155; }
+        .text-muted { color: #94a3b8; font-style: italic; }
+        .text-bold { font-weight: 600; color: #1e293b; }
+        .status-pending { background-color: #fffbeb; color: #b45309; border: 1px solid #fef3c7; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+        .actions-cell { display: flex; gap: 12px; align-items: center; }
+        .btn-edit, .btn-delete { background: none; border: none; font-weight: 600; cursor: pointer; }
+        .btn-edit { color: #b45309; }
+        .btn-delete { color: #64748b; font-size: 16px; }
+        .btn-baixar { background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; }
+        .thumb-img { width: 35px; height: 35px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 1px solid #cbd5e1; display: block; margin: 0 auto; }
+        
+        /* MODAL */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 9999; }
+        .modal-content { background: #fff; padding: 25px; border-radius: 12px; width: 400px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+        .modal-content h3 { margin-bottom: 15px; color: #1e293b; }
+        .modal-field { margin-bottom: 12px; }
+        .modal-field label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; color: #475569; }
+        .modal-field input { width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px; }
     </style>
 </head>
 <body>
@@ -352,10 +56,7 @@
     <header>
         <div class="logo-container">
             <div class="logo-icon">📦</div>
-            <div class="logo-text">
-                <h1>ProdControl</h1>
-                <p>Gerenciamento de Produtos</p>
-            </div>
+            <div class="logo-text"><h1>ProdControl</h1><p>Gerenciamento de Produtos</p></div>
         </div>
         <div class="header-buttons">
             <button class="btn-header">Cadastrar</button>
@@ -364,14 +65,9 @@
     </header>
 
     <main class="main-card">
-        <!-- BARRA DE FILTROS -->
         <div class="filters-row">
             <div class="input-group"><span>🔍</span><input type="text" placeholder="Fiscal"></div>
-            <div class="input-group" style="flex: 1.5;">
-                <select>
-                    <option>Todos os setores</option>
-                </select>
-            </div>
+            <div class="input-group" style="flex: 1.5;"><select><option>Todos os setores</option></select></div>
             <div class="input-group" style="flex: 1.5;"><span>🔍</span><input type="text" placeholder="Código de barras"></div>
             <div class="checkbox-group">
                 <label><input type="checkbox"> Baixados</label>
@@ -381,17 +77,15 @@
 
         <div class="summary-row">
             <div class="badges-container">
-                <div class="badge-info">Total <strong>3</strong></div>
+                <div class="badge-info">Total <strong id="total-count">2</strong></div>
                 <div class="badge-info">✅ Baixados <strong>0</strong></div>
-                <div class="badge-info">⏳ Pendentes <strong>3</strong></div>
-                <div class="badge-info">📦 Qtd. Total <strong>10,054</strong></div>
+                <div class="badge-info">⏳ Pendentes <strong>2</strong></div>
             </div>
             <button class="btn-refresh" onclick="window.location.reload()">🔄 Atualizar</button>
         </div>
 
-        <!-- TABELA -->
         <div class="table-container">
-            <table id="produtosTable">
+            <table>
                 <thead>
                     <tr>
                         <th>Fiscal</th>
@@ -401,44 +95,37 @@
                         <th class="center">Qtd</th>
                         <th class="center">Foto</th>
                         <th>Status</th>
-                        <th>Data/Hora</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr data-id="1">
-                        <td class="cell-fiscal">Celso</td>
-                        <td class="cell-setor text-bold">Matéria-Prima Rotisserie</td>
-                        <td class="cell-codigo">619205318003</td>
-                        <td class="cell-desc text-muted">Produto não cadastrado</td>
-                        <td class="cell-qtd center text-bold">1</td>
-                        <td class="cell-foto center">
-                            <span class="icon-camera" style="cursor:pointer;" onclick="abrirSeletorFoto(this)">📷</span>
-                        </td>
+                <tbody id="table-body">
+                    <tr>
+                        <td class="fisc">Celso</td>
+                        <td class="seto text-bold">Matéria-Prima Rotisserie</td>
+                        <td class="codi">619205318003</td>
+                        <td class="desc text-muted">Produto não cadastrado</td>
+                        <td class="qtde center text-bold">1</td>
+                        <td class="center"><button onclick="dispararFoto(this)" style="background:none; border:none; cursor:pointer; font-size:16px;">📷</button></td>
                         <td><span class="status-pending">Pendente</span></td>
-                        <td>21/06/2026, 07:44:32</td>
                         <td>
                             <div class="actions-cell">
-                                <button class="btn-edit" onclick="editarLinha(this)">✏️ Editar</button>
+                                <button class="btn-edit" onclick="abrirEditor(this)">✏️ Editar</button>
                                 <button class="btn-delete" onclick="this.closest('tr').remove()">🗑️</button>
                                 <button class="btn-baixar">✓ Baixar</button>
                             </div>
                         </td>
                     </tr>
-                    <tr data-id="2">
-                        <td class="cell-fiscal">João carlos</td>
-                        <td class="cell-setor text-bold">Perda Avaria</td>
-                        <td class="cell-codigo">7891097018220</td>
-                        <td class="cell-desc">Leite Uht Batavo 1l Semi Desnatado</td>
-                        <td class="cell-qtd center text-bold">6</td>
-                        <td class="cell-foto center">
-                            <span class="icon-camera" style="cursor:pointer;" onclick="abrirSeletorFoto(this)">📷</span>
-                        </td>
+                    <tr>
+                        <td class="fisc">João carlos</td>
+                        <td class="seto text-bold">Perda Avaria</td>
+                        <td class="codi">7891097018220</td>
+                        <td class="desc">Leite Uht Batavo 1l</td>
+                        <td class="qtde center text-bold">6</td>
+                        <td class="center"><button onclick="dispararFoto(this)" style="background:none; border:none; cursor:pointer; font-size:16px;">📷</button></td>
                         <td><span class="status-pending">Pendente</span></td>
-                        <td>17/06/2026, 17:25:50</td>
                         <td>
                             <div class="actions-cell">
-                                <button class="btn-edit" onclick="editarLinha(this)">✏️ Editar</button>
+                                <button class="btn-edit" onclick="abrirEditor(this)">✏️ Editar</button>
                                 <button class="btn-delete" onclick="this.closest('tr').remove()">🗑️</button>
                                 <button class="btn-baixar">✓ Baixar</button>
                             </div>
@@ -449,98 +136,67 @@
         </div>
     </main>
 
-    <!-- INPUT INVISÍVEL PARA ANEXAR ARQUIVOS -->
-    <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="fotoSelecionada(this)">
+    <input type="file" id="campo-foto" accept="image/*" style="display: none;">
 
-    <!-- MODAL DE EDIÇÃO -->
-    <div id="editModal" class="modal">
+    <!-- JANELA DE EDIÇÃO -->
+    <div id="janela-modal" class="modal">
         <div class="modal-content">
-            <h3>Editar Produto</h3>
-            <div class="modal-field">
-                <label>Fiscal</label>
-                <input type="text" id="modalFiscal">
-            </div>
-            <div class="modal-field">
-                <label>Setor</label>
-                <input type="text" id="modalSetor">
-            </div>
-            <div class="modal-field">
-                <label>Código</label>
-                <input type="text" id="modalCodigo">
-            </div>
-            <div class="modal-field">
-                <label>Descrição</label>
-                <input type="text" id="modalDesc">
-            </div>
-            <div class="modal-field">
-                <label>Quantidade</label>
-                <input type="text" id="modalQtd">
-            </div>
+            <h3>Editar Item</h3>
+            <div class="modal-field"><label>Fiscal</label><input type="text" id="edit-fisc"></div>
+            <div class="modal-field"><label>Setor</label><input type="text" id="edit-seto"></div>
+            <div class="modal-field"><label>Código</label><input type="text" id="edit-codi"></div>
+            <div class="modal-field"><label>Descrição</label><input type="text" id="edit-desc"></div>
+            <div class="modal-field"><label>Quantidade</label><input type="text" id="edit-qtde"></div>
             <div class="modal-actions">
-                <button class="btn-cancel" onclick="fecharModal()">Cancelar</button>
-                <button class="btn-save" onclick="salvarEdicao()">Salvar Alterações</button>
+                <button class="btn-cancel" onclick="fecharEditor()">Cancelar</button>
+                <button class="btn-save" onclick="salvarFormulario()" style="background:#4f83e2; color:#fff; border:none; padding:8px 12px; border-radius:6px; cursor:pointer;">Salvar</button>
             </div>
         </div>
     </div>
 
     <script>
-        let linhaSendoEditada = null;
-        let celulaFotoSendoAlterada = null;
+        var trAlvo = null;
+        var tdFotoAlvo = null;
 
-        // --- FUNÇÕES DE ANEXAR IMAGEM ---
-        function abrirSeletorFoto(elementoSpan) {
-            celulaFotoSendoAlterada = elementoSpan.parentElement;
-            document.getElementById('fileInput').click(); // Dispara o seletor do Windows/Mac
+        function abrirEditor(btn) {
+            trAlvo = btn.closest('tr');
+            document.getElementById('edit-fisc').value = trAlvo.querySelector('.fisc').innerText;
+            document.getElementById('edit-seto').value = trAlvo.querySelector('.seto').innerText;
+            document.getElementById('edit-codi').value = trAlvo.querySelector('.codi').innerText;
+            document.getElementById('edit-desc').value = trAlvo.querySelector('.desc').innerText;
+            document.getElementById('edit-qtde').value = trAlvo.querySelector('.qtde').innerText;
+            document.getElementById('janela-modal').style.display = 'flex';
         }
 
-        function fotoSelecionada(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    // Substitui o ícone 📷 pela imagem carregada do PC
-                    celulaFotoSendoAlterada.innerHTML = `<img src="${e.target.result}" class="thumb-img" onclick="abrirSeletorFoto(this)">`;
+        function fecharEditor() {
+            document.getElementById('janela-modal').style.display = 'none';
+        }
+
+        function salvarFormulario() {
+            if(trAlvo) {
+                trAlvo.querySelector('.fisc').innerText = document.getElementById('edit-fisc').value;
+                trAlvo.querySelector('.seto').innerText = document.getElementById('edit-seto').value;
+                trAlvo.querySelector('.codi').innerText = document.getElementById('edit-codi').value;
+                trAlvo.querySelector('.desc').innerText = document.getElementById('edit-desc').value;
+                trAlvo.querySelector('.qtde').innerText = document.getElementById('edit-qtde').value;
+                fecharEditor();
+            }
+        }
+
+        function dispararFoto(btn) {
+            tdFotoAlvo = btn.parentElement;
+            document.getElementById('campo-foto').click();
+        }
+
+        document.getElementById('campo-foto').addEventListener('change', function() {
+            if (this.files && this.files[0] && tdFotoAlvo) {
+                var ler = new FileReader();
+                ler.onload = function(e) {
+                    tdFotoAlvo.innerHTML = '<img src="' + e.target.result + '" class="thumb-img" onclick="dispararFoto(this)">';
                 };
-                reader.readAsDataURL(input.files[0]);
+                ler.readAsDataURL(this.files[0]);
             }
-        }
-
-        // --- FUNÇÕES DE EDIÇÃO (MODAL) ---
-        function editarLinha(botao) {
-            linhaSendoEditada = botao.closest('tr');
-            
-            // Pega os dados atuais da linha clicada
-            document.getElementById('modalFiscal').value = linhaSendoEditada.querySelector('.cell-fiscal').innerText;
-            document.getElementById('modalSetor').value = linhaSendoEditada.querySelector('.cell-setor').innerText;
-            document.getElementById('modalCodigo').value = linhaSendoEditada.querySelector('.cell-codigo').innerText;
-            document.getElementById('modalDesc').value = linhaSendoEditada.querySelector('.cell-desc').innerText;
-            document.getElementById('modalQtd').value = linhaSendoEditada.querySelector('.cell-qtd').innerText;
-
-            // Mostra a janela/modal na tela
-            document.getElementById('editModal').style.display = 'flex';
-        }
-
-        function fecharModal() {
-            document.getElementById('editModal').style.display = 'none';
-            linhaSendoEditada = null;
-        }
-
-        function salvarEdicao() {
-            if (linhaSendoEditada) {
-                // Salva os novos valores de volta na tabela
-                linhaSendoEditada.querySelector('.cell-fiscal').innerText = document.getElementById('modalFiscal').value;
-                linhaSendoEditada.querySelector('.cell-setor').innerText = document.getElementById('modalSetor').value;
-                linhaSendoEditada.querySelector('.cell-codigo').innerText = document.getElementById('modalCodigo').value;
-                linhaSendoEditada.querySelector('.cell-desc').innerText = document.getElementById('modalDesc').value;
-                linhaSendoEditada.querySelector('.cell-qtd').innerText = document.getElementById('modalQtd').value;
-                
-                // Remove a formatação cinza (itálico) se a descrição foi modificada de "Produto não cadastrado"
-                if (document.getElementById('modalDesc').value !== "Produto não cadastrado") {
-                    linhaSendoEditada.querySelector('.cell-desc').classList.remove('text-muted');
-                }
-
-                fecharModal();
-            }
-        }
+        });
     </script>
 </body>
 </html>
