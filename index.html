@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estoque Insuficiente (047)</title>
+    <title>Estoque Insuficiente - 047 - Lins Junqueira</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Biblioteca para geração do PDF -->
@@ -50,6 +50,7 @@
             align-items: center;
             justify-content: center;
             font-size: 20px;
+            flex-shrink: 0;
         }
 
         .logo-text h1 {
@@ -160,6 +161,7 @@
         .badges-container {
             display: flex;
             gap: 10px;
+            flex-wrap: wrap;
         }
 
         .badge-info {
@@ -181,6 +183,7 @@
             overflow-x: auto;
             border-radius: 8px;
             border: 1px solid #e2e8f0;
+            -webkit-overflow-scrolling: touch; /* Rolagem suave no iOS */
         }
 
         table {
@@ -188,6 +191,7 @@
             border-collapse: collapse;
             text-align: left;
             font-size: 13.5px;
+            white-space: nowrap; /* Evita que o texto quebre linhas bizarramente na tabela */
         }
 
         th {
@@ -299,6 +303,9 @@
             padding: 25px;
             border-radius: 12px;
             width: 420px;
+            max-width: 90%; /* Responsivo para telas pequenas */
+            max-height: 90vh;
+            overflow-y: auto; /* Permite rolagem interna se a tela for muito baixa */
             box-shadow: 0 4px 25px rgba(0,0,0,0.2);
         }
 
@@ -430,6 +437,79 @@
             border-radius: 6px;
             cursor: pointer;
         }
+
+        /* ========================================================
+           ### OTIMIZAÇÕES EXCLUSIVAS PARA DISPOSITIVOS MÓVEIS ###
+           ======================================================== */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 15px;
+                gap: 15px;
+            }
+
+            .header-buttons {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .btn-header {
+                flex: 1; /* Faz os botões dividirem o espaço igualmente */
+                padding: 12px 8px;
+                font-size: 13px;
+                text-align: center;
+                display: inline-flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .main-card {
+                padding: 15px;
+            }
+
+            .filters-row {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .input-group {
+                width: 100%;
+            }
+
+            .summary-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .badges-container {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .badge-info {
+                flex: 1;
+                text-align: center;
+                padding: 6px 4px;
+                font-size: 12px;
+            }
+
+            .preview-header {
+                flex-direction: column;
+                gap: 10px;
+                padding: 15px;
+                text-align: center;
+            }
+
+            .preview-container {
+                padding: 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -438,14 +518,12 @@
         <div class="logo-container">
             <div class="logo-icon">📦</div>
             <div class="logo-text">
-                <h1>Estoque Insuficiente (047)</h1>
+                <h1>Estoque Insuficiente - 047</h1>
                 <p>Gerenciamento de Controle de Estoque</p>
             </div>
         </div>
         <div class="header-buttons">
-            <!-- NOME ALTERADO: de '✓ Baixar' para '🖨️ Imprimir/Gerar Arquivo PDF' -->
-            <button class="btn-header btn-baixar-top" id="btnBaixarTop">🖨️ Imprimir/Gerar Arquivo PDF</button>
-            <!-- NOME ALTERADO: de '➕ Incluir Linha' para '➕ Adicionar Estoque' -->
+            <button class="btn-header btn-baixar-top" id="btnBaixarTop">🖨️ Imprimir/PDF</button>
             <button class="btn-header btn-add" id="btnIncluirLinha">➕ Adicionar Estoque</button>
         </div>
     </header>
@@ -458,12 +536,12 @@
                 <span>🔍</span>
                 <input type="text" id="filtroPrev" placeholder="Filtrar Prevenção...">
             </div>
-            <div class="input-group" style="flex: 1.5;">
+            <div class="input-group">
                 <select id="filtroDepto">
                     <option value="">Todos os departamentos</option>
                 </select>
             </div>
-            <div class="input-group" style="flex: 1.5;">
+            <div class="input-group">
                 <span>🔍</span>
                 <input type="text" id="filtroCodigo" placeholder="Código de barras...">
             </div>
@@ -478,7 +556,7 @@
             </div>
         </div>
 
-        <!-- TABELA PRINCIPAL -->
+        <!-- TABELA PRINCIPAL COM ROLAGEM SUAVE NO CELULAR -->
         <div class="table-container">
             <table id="produtosTable">
                 <thead>
@@ -540,7 +618,7 @@
 
     <input type="file" id="globalFileInput" accept="image/*" style="display: none;">
 
-    <!-- MODAL DE FORMULÁRIO (CADASTRO / EDIÇÃO) -->
+    <!-- MODAL DE FORMULÁRIO -->
     <div id="editModal" class="modal">
         <div class="modal-content">
             <h3 id="modalTitulo">Editar Produto</h3>
@@ -566,31 +644,31 @@
         </div>
     </div>
 
-    <!-- MODAL DE VISUALIZAÇÃO GRANDE DA FOTO -->
+    <!-- MODAL DE FOTO -->
     <div id="imageViewerModal" class="image-viewer-modal">
         <div class="image-viewer-content">
-            <img id="viewerImageTarget" src="" alt="Visualização expandida do item">
+            <img id="viewerImageTarget" src="" alt="Visualização expandida">
         </div>
         <div class="image-viewer-actions">
             <button class="btn-change-image" id="btnViewerAlterar">Trocar Foto</button>
-            <button class="btn-close-viewer" id="btnViewerFechar">Fechar Visualização</button>
+            <button class="btn-close-viewer" id="btnViewerFechar">Fechar</button>
         </div>
     </div>
 
-    <!-- TELA DE PREVIEW DO RELATÓRIO (FULLSCREEN) -->
+    <!-- PREVIEW TELA CHEIA DO PDF -->
     <div id="previewModal" class="preview-modal">
         <div class="preview-header">
-            <h2>Visualização Prévia do Relatório Informativo</h2>
-            <div style="display: flex; gap: 15px;">
-                <button class="btn-close-preview" id="btnFecharPreview">❌ Fechar Tela</button>
-                <button class="btn-download-now" id="btnConfirmarDownload">📥 Baixar PDF na Área de Trabalho</button>
+            <h2>Visualização do Relatório</h2>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-close-preview" id="btnFecharPreview">❌ Fechar</button>
+                <button class="btn-download-now" id="btnConfirmarDownload">📥 Baixar PDF</button>
             </div>
         </div>
         <div class="preview-container">
             <div class="preview-paper" id="espaco-impressao-pdf">
-                <h1 style="color: #1e293b; margin-bottom: 5px;">Estoque Insuficiente (047)</h1>
-                <p style="color: #64748b; font-size: 13px; margin-bottom: 25px;">Gerado em: 12/07/2026</p>
-                <div id="tabela-clonada-container"></div>
+                <h1 style="color: #1e293b; margin-bottom: 5px; font-size: 18px;">Estoque Insuficiente - 047</h1>
+                <p style="color: #64748b; font-size: 12px; margin-bottom: 20px;">Gerado em: 12/07/2026</p>
+                <div id="tabela-clonada-container" style="overflow-x: auto;"></div>
             </div>
         </div>
     </div>
@@ -685,7 +763,6 @@
                 document.getElementById("cont-pendentes").innerText = pendentes;
             }
 
-            // O ID foi mantido, mas aciona a ação de "Adicionar Estoque"
             document.getElementById("btnIncluirLinha").addEventListener("click", function() {
                 modoFormulario = "INCLUIR";
                 modalTitulo.innerText = "Adicionar Novo Estoque";
@@ -703,7 +780,6 @@
                 modalEdicao.style.display = "flex";
             });
 
-            // O ID foi mantido, mas agora representa a impressão e geração de PDF
             document.getElementById("btnBaixarTop").addEventListener("click", function () {
                 const linhas = tableBody.querySelectorAll("tr");
                 linhas.forEach(linha => {
@@ -737,7 +813,7 @@
 
                     document.getElementById("modalData").value = formatarDataParaInput(linha.querySelector(".cell-data").innerText);
                     document.getElementById("modalPrev").value = linha.querySelector(".cell-prev").innerText;
-                    document.getElementById("modalDepto").value = linha.querySelector(".cell-depto").innerText;
+                    document.getElementById("modalDepto").value = inlineData = linha.querySelector(".cell-depto").innerText;
                     document.getElementById("modalDoc").value = linha.querySelector(".cell-doc").innerText;
                     document.getElementById("modalEspecie").value = linha.querySelector(".cell-especie").innerText;
                     document.getElementById("modalCodigo").value = linha.querySelector(".cell-codigo").innerText;
