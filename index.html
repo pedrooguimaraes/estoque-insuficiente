@@ -82,6 +82,17 @@
             color: #64748b;
         }
 
+        .btn-header.btn-add {
+            background-color: #4f83e2;
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+
+        .btn-header.btn-add:hover {
+            background-color: #3b6ecc;
+        }
+
         .btn-header.active {
             background: #fff;
             color: #1e293b;
@@ -317,6 +328,9 @@
         .modal-field label { display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px; }
         .modal-field input, .modal-field select { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; }
         .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+        
+        .btn-cancel { background: #fff; border: 1px solid #cbd5e1; color: #64748b; padding: 10px 15px; border-radius: 6px; cursor: pointer; }
+        .btn-save { background: #4f83e2; border: none; color: white; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: 600; }
 
         /* --- MODAL DO PREVIEW DE IMAGEM --- */
         .image-viewer-modal {
@@ -450,7 +464,7 @@
             </div>
         </div>
         <div class="header-buttons">
-            <button class="btn-header">Cadastrar</button>
+            <button class="btn-header btn-add" id="btnIncluirLinha">➕ Incluir Linha</button>
             <button class="btn-header active">Visualizar</button>
         </div>
     </header>
@@ -461,11 +475,11 @@
         <div class="filters-row">
             <div class="input-group">
                 <span>🔍</span>
-                <input type="text" id="filtroFiscal" placeholder="Filtrar Fiscal...">
+                <input type="text" id="filtroPrev" placeholder="Filtrar Prevenção...">
             </div>
             <div class="input-group" style="flex: 1.5;">
-                <select id="filtroSetor">
-                    <option value="">Todos os setores</option>
+                <select id="filtroDepto">
+                    <option value="">Todos os departamentos</option>
                 </select>
             </div>
             <div class="input-group" style="flex: 1.5;">
@@ -489,9 +503,8 @@
             <table id="produtosTable">
                 <thead>
                     <tr>
-                        <th>Fiscal</th>
+                        <th>Prevenção</th>
                         <th>Departamento</th>
-                        <th>Setor</th>
                         <th>Espécie</th>
                         <th>Código</th>
                         <th>Descrição</th>
@@ -503,9 +516,8 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="cell-fiscal">Celso</td>
-                        <td class="cell-depto">-</td>
-                        <td class="cell-setor text-bold">Matéria-Prima Rotisserie</td>
+                        <td class="cell-prev">Celso</td>
+                        <td class="cell-depto text-bold">Matéria-Prima Rotisserie</td>
                         <td class="cell-especie">-</td>
                         <td class="cell-codigo">619205318003</td>
                         <td class="cell-desc text-muted">Produto não cadastrado</td>
@@ -521,9 +533,8 @@
                         </td>
                     </tr>
                     <tr>
-                        <td class="cell-fiscal">João carlos</td>
-                        <td class="cell-depto">-</td>
-                        <td class="cell-setor text-bold">Perda Avaria</td>
+                        <td class="cell-prev">João carlos</td>
+                        <td class="cell-depto text-bold">Perda Avaria</td>
                         <td class="cell-especie">-</td>
                         <td class="cell-codigo">7891097018220</td>
                         <td class="cell-desc">Leite Uht Batavo 1l Semi Desnatado</td>
@@ -545,17 +556,16 @@
 
     <input type="file" id="globalFileInput" accept="image/*" style="display: none;">
 
-    <!-- MODAL DE EDIÇÃO -->
+    <!-- MODAL DE FORMULÁRIO (CADASTRO / EDIÇÃO) -->
     <div id="editModal" class="modal">
         <div class="modal-content">
-            <h3>Editar Produto</h3>
-            <div class="modal-field"><label>Fiscal</label><input type="text" id="modalFiscal"></div>
+            <h3 id="modalTitulo">Editar Produto</h3>
+            <div class="modal-field"><label>Prevenção</label><input type="text" id="modalPrev"></div>
             <div class="modal-field"><label>Departamento</label><input type="text" id="modalDepto"></div>
-            <div class="modal-field"><label>Setor</label><input type="text" id="modalSetor"></div>
             <div class="modal-field"><label>Espécie</label><input type="text" id="modalEspecie"></div>
             <div class="modal-field"><label>Código</label><input type="text" id="modalCodigo"></div>
             <div class="modal-field"><label>Descrição</label><input type="text" id="modalDesc"></div>
-            <div class="modal-field"><label>Quantidade</label><input type="text" id="modalQtd"></div>
+            <div class="modal-field"><label>Quantidade</label><input type="number" id="modalQtd" value="1"></div>
             <div class="modal-field">
                 <label>Status</label>
                 <select id="modalStatus">
@@ -565,7 +575,7 @@
             </div>
             <div class="modal-actions">
                 <button class="btn-cancel" id="btnFecharModal">Cancelar</button>
-                <button class="btn-save" id="btnSalvarModal">Salvar Alterações</button>
+                <button class="btn-save" id="btnSalvarModal">Salvar</button>
             </div>
         </div>
     </div>
@@ -603,57 +613,59 @@
         document.addEventListener("DOMContentLoaded", function () {
             let linhaSendoEditada = null;
             let celulaFotoSendoAlterada = null;
+            let modoFormulario = "EDITAR"; // "INCLUIR" ou "EDITAR"
 
             const modalEdicao = document.getElementById("editModal");
+            const modalTitulo = document.getElementById("modalTitulo");
             const modalPreview = document.getElementById("previewModal");
             const modalViewer = document.getElementById("imageViewerModal");
             const viewerImageTarget = document.getElementById("viewerImageTarget");
             const fileInput = document.getElementById("globalFileInput");
             const tableBody = document.querySelector("#produtosTable tbody");
-            const selectSetor = document.getElementById("filtroSetor");
+            const selectDepto = document.getElementById("filtroDepto");
 
-            // --- SINCRONIZAÇÃO AUTOMÁTICA DOS SETORES ---
-            function sincronizarFiltroSetores() {
+            // --- SINCRONIZAÇÃO AUTOMÁTICA DOS DEPARTAMENTOS NO FILTRO ---
+            function sincronizarFiltroDeptos() {
                 const linhas = tableBody.querySelectorAll("tr");
-                let setoresExistentes = new Set();
+                let deptosExistentes = new Set();
 
                 linhas.forEach(linha => {
-                    const setor = linha.querySelector(".cell-setor").innerText.trim();
-                    if(setor) setoresExistentes.add(setor);
+                    const depto = linha.querySelector(".cell-depto").innerText.trim();
+                    if(depto) deptosExistentes.add(depto);
                 });
 
-                selectSetor.innerHTML = '<option value="">Todos os setores</option>';
-                setoresExistentes.forEach(setor => {
+                selectDepto.innerHTML = '<option value="">Todos os departamentos</option>';
+                deptosExistentes.forEach(depto => {
                     const option = document.createElement("option");
-                    option.value = setor;
-                    option.innerText = setor;
-                    selectSetor.appendChild(option);
+                    option.value = depto;
+                    option.innerText = depto;
+                    selectDepto.appendChild(option);
                 });
             }
 
             // --- SISTEMA DE FILTRAGEM ---
             function executarFiltros() {
-                const fFiscal = document.getElementById("filtroFiscal").value.toLowerCase();
-                const fSetor = selectSetor.value.toLowerCase();
+                const fPrev = document.getElementById("filtroPrev").value.toLowerCase();
+                const fDepto = selectDepto.value.toLowerCase();
                 const fCodigo = document.getElementById("filtroCodigo").value.toLowerCase();
                 const lines = tableBody.querySelectorAll("tr");
 
                 lines.forEach(linha => {
-                    const txtFiscal = linha.querySelector(".cell-fiscal").innerText.toLowerCase();
-                    const txtSetor = linha.querySelector(".cell-setor").innerText.toLowerCase();
+                    const txtPrev = linha.querySelector(".cell-prev").innerText.toLowerCase();
+                    const txtDepto = linha.querySelector(".cell-depto").innerText.toLowerCase();
                     const txtCodigo = linha.querySelector(".cell-codigo").innerText.toLowerCase();
 
-                    const bateFiscal = txtFiscal.includes(fFiscal);
-                    const bateSetor = fSetor === "" || txtSetor.includes(fSetor);
+                    const batePrev = txtPrev.includes(fPrev);
+                    const bateDepto = fDepto === "" || txtDepto.includes(fDepto);
                     const bateCodigo = txtCodigo.includes(fCodigo);
 
-                    linha.style.display = (bateFiscal && bateSetor && bateCodigo) ? "" : "none";
+                    linha.style.display = (batePrev && bateDepto && bateCodigo) ? "" : "none";
                 });
                 atualizarContadores();
             }
 
-            document.getElementById("filtroFiscal").addEventListener("input", () => executarFiltros());
-            selectSetor.addEventListener("change", executarFiltros);
+            document.getElementById("filtroPrev").addEventListener("input", () => executarFiltros());
+            selectDepto.addEventListener("change", executarFiltros);
             document.getElementById("filtroCodigo").addEventListener("input", executarFiltros);
 
             // --- ATUALIZAR CONTADORES ---
@@ -675,6 +687,23 @@
                 document.getElementById("cont-pendentes").innerText = pendentes;
             }
 
+            // --- INCLUIR NOVA LINHA (BOTAO SUPERIOR DIREITO) ---
+            document.getElementById("btnIncluirLinha").addEventListener("click", function() {
+                modoFormulario = "INCLUIR";
+                modalTitulo.innerText = "Incluir Novo Registro";
+                
+                // Limpa os campos do formulário
+                document.getElementById("modalPrev").value = "";
+                document.getElementById("modalDepto").value = "";
+                document.getElementById("modalEspecie").value = "";
+                document.getElementById("modalCodigo").value = "";
+                document.getElementById("modalDesc").value = "";
+                document.getElementById("modalQtd").value = "1";
+                document.getElementById("modalStatus").value = "Pendente";
+
+                modalEdicao.style.display = "flex";
+            });
+
             // --- EVENTOS DA TABELA PRINCIPAL ---
             tableBody.addEventListener("click", function (event) {
                 const target = event.target;
@@ -682,14 +711,17 @@
 
                 // Botão Editar dados básicos
                 if (target.classList.contains("btn-edit")) {
+                    modoFormulario = "EDITAR";
+                    modalTitulo.innerText = "Editar Produto";
                     linhaSendoEditada = linha;
-                    document.getElementById("modalFiscal").value = linha.querySelector(".cell-fiscal").innerText;
+
+                    document.getElementById("modalPrev").value = linha.querySelector(".cell-prev").innerText;
                     document.getElementById("modalDepto").value = linha.querySelector(".cell-depto").innerText;
-                    document.getElementById("modalSetor").value = linha.querySelector(".cell-setor").innerText;
                     document.getElementById("modalEspecie").value = linha.querySelector(".cell-especie").innerText;
                     document.getElementById("modalCodigo").value = linha.querySelector(".cell-codigo").innerText;
                     document.getElementById("modalDesc").value = linha.querySelector(".cell-desc").innerText;
                     document.getElementById("modalQtd").value = linha.querySelector(".cell-qtd").innerText;
+                    
                     const statusAtual = linha.querySelector(".cell-status").innerText.trim();
                     document.getElementById("modalStatus").value = statusAtual.includes("Baixado") ? "Baixado" : "Pendente";
 
@@ -713,7 +745,7 @@
                 if (target.classList.contains("btn-delete")) {
                     if (confirm("Deseja excluir este item?")) {
                         linha.remove();
-                        sincronizarFiltroSetores();
+                        sincronizarFiltroDeptos();
                         atualizarContadores();
                     }
                 }
@@ -748,29 +780,58 @@
                 }
             });
 
-            // Fechar modal de edição
+            // Fechar modal de formulário
             document.getElementById("btnFecharModal").addEventListener("click", () => modalEdicao.style.display = "none");
 
-            // Salvar dados editados no modal
+            // Salvar dados (Inclusão ou Edição)
             document.getElementById("btnSalvarModal").addEventListener("click", function () {
-                if (linhaSendoEditada) {
-                    linhaSendoEditada.querySelector(".cell-fiscal").innerText = document.getElementById("modalFiscal").value;
-                    linhaSendoEditada.querySelector(".cell-depto").innerText = document.getElementById("modalDepto").value;
-                    linhaSendoEditada.querySelector(".cell-setor").innerText = document.getElementById("modalSetor").value;
-                    linhaSendoEditada.querySelector(".cell-especie").innerText = document.getElementById("modalEspecie").value;
-                    linhaSendoEditada.querySelector(".cell-codigo").innerText = document.getElementById("modalCodigo").value;
-                    linhaSendoEditada.querySelector(".cell-desc").innerText = document.getElementById("modalDesc").value;
-                    linhaSendoEditada.querySelector(".cell-qtd").innerText = document.getElementById("modalQtd").value;
+                const prevVal = document.getElementById("modalPrev").value || "-";
+                const deptoVal = document.getElementById("modalDepto").value || "-";
+                const especieVal = document.getElementById("modalEspecie").value || "-";
+                const codigoVal = document.getElementById("modalCodigo").value || "-";
+                const descVal = document.getElementById("modalDesc").value || "Produto não cadastrado";
+                const qtdVal = document.getElementById("modalQtd").value || "0";
+                const statusVal = document.getElementById("modalStatus").value;
 
-                    const novoStatus = document.getElementById("modalStatus").value;
-                    linhaSendoEditada.querySelector(".cell-status").innerHTML = novoStatus === "Baixado" 
-                        ? `<span class="status-badge status-success">Baixado</span>`
-                        : `<span class="status-badge status-pending">Pendente</span>`;
+                const statusBadgeHTML = statusVal === "Baixado" 
+                    ? `<span class="status-badge status-success">Baixado</span>`
+                    : `<span class="status-badge status-pending">Pendente</span>`;
 
-                    modalEdicao.style.display = "none";
-                    sincronizarFiltroSetores();
-                    atualizarContadores();
+                if (modoFormulario === "EDITAR" && linhaSendoEditada) {
+                    // Aplica alterações na linha existente
+                    linhaSendoEditada.querySelector(".cell-prev").innerText = prevVal;
+                    linhaSendoEditada.querySelector(".cell-depto").innerText = deptoVal;
+                    linhaSendoEditada.querySelector(".cell-especie").innerText = especieVal;
+                    linhaSendoEditada.querySelector(".cell-codigo").innerText = codigoVal;
+                    linhaSendoEditada.querySelector(".cell-desc").innerText = descVal;
+                    linhaSendoEditada.querySelector(".cell-qtd").innerText = qtdVal;
+                    linhaSendoEditada.querySelector(".cell-status").innerHTML = statusBadgeHTML;
+                } else if (modoFormulario === "INCLUIR") {
+                    // Cria uma nova linha estruturada fisicamente
+                    const novaLinha = document.createElement("tr");
+                    novaLinha.innerHTML = `
+                        <td class="cell-prev">${prevVal}</td>
+                        <td class="cell-depto text-bold">${deptoVal}</td>
+                        <td class="cell-especie">${especieVal}</td>
+                        <td class="cell-codigo">${codigoVal}</td>
+                        <td class="cell-desc">${descVal}</td>
+                        <td class="cell-qtd center text-bold">${qtdVal}</td>
+                        <td class="center"><button class="btn-foto-trigger">📷</button></td>
+                        <td class="cell-status">${statusBadgeHTML}</td>
+                        <td>
+                            <div class="actions-cell">
+                                <button class="btn-edit">✏️ Editar</button>
+                                <button class="btn-delete">🗑️</button>
+                                <button class="btn-baixar">✓ Baixar</button>
+                            </div>
+                        </td>
+                    `;
+                    tableBody.appendChild(novaLinha);
                 }
+
+                modalEdicao.style.display = "none";
+                sincronizarFiltroDeptos();
+                atualizarContadores();
             });
 
             // CONTROLES DO VISUALIZADOR DE FOTO EXPANDIDA
@@ -800,7 +861,7 @@
             });
 
             // Configuração Inicial de Carga
-            sincronizarFiltroSetores();
+            sincronizarFiltroDeptos();
             atualizarContadores();
         });
     </script>
