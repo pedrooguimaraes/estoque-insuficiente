@@ -66,29 +66,6 @@
             font-weight: 600;
         }
 
-        .header-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn-header {
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            border: 1px solid #e2e8f0;
-            background: #fff;
-            color: #64748b;
-        }
-
-        .btn-header.active {
-            background: #fff;
-            color: #1e293b;
-            border-color: #cbd5e1;
-            font-weight: 600;
-        }
-
         .main-card {
             background: #ffffff;
             border-radius: 12px;
@@ -159,16 +136,6 @@
 
         .badge-info strong {
             color: #1e293b;
-        }
-
-        .btn-refresh {
-            background: #fff;
-            border: 1px solid #cbd5e1;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 13px;
-            color: #1e293b;
-            cursor: pointer;
         }
 
         .table-container {
@@ -449,10 +416,6 @@
                 <p>Gerenciamento de Produtos</p>
             </div>
         </div>
-        <div class="header-buttons">
-            <button class="btn-header">Cadastrar</button>
-            <button class="btn-header active">Visualizar</button>
-        </div>
     </header>
 
     <main class="main-card">
@@ -481,7 +444,6 @@
                 <div class="badge-info">✅ Baixados <strong id="cont-baixados">0</strong></div>
                 <div class="badge-info">⏳ Pendentes <strong id="cont-pendentes">0</strong></div>
             </div>
-            <button class="btn-refresh" onclick="window.location.reload()">🔄 Atualizar</button>
         </div>
 
         <!-- TABELA PRINCIPAL -->
@@ -626,7 +588,7 @@
                 });
             }
 
-            // --- 2. SISTEMA DE FILTRAGEM CORRIGIDO ---
+            // --- 2. SISTEMA DE FILTRAGEM ---
             function executarFiltros() {
                 const fFiscal = document.getElementById("filtroFiscal").value.toLowerCase();
                 const fSetor = selectSetor.value.toLowerCase();
