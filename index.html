@@ -501,7 +501,7 @@
                         <td class="cell-depto text-bold">Matéria-Prima Rotisserie</td>
                         <td class="cell-especie">-</td>
                         <td class="cell-codigo">619205318003</td>
-                        <td class="cell-desc text-muted">Produto não cadastrado</td>
+                        <td class="cell-desc">Produto não cadastrado</td>
                         <td class="cell-qtd center text-bold">1</td>
                         <td class="center"><button class="btn-foto-trigger">📷</button></td>
                         <td class="cell-status"><span class="status-badge status-pending">Pendente</span></td>
@@ -657,7 +657,7 @@
                 linhas.forEach(linha => {
                     if (linha.style.display !== "none") {
                         total++;
-                        const status = linha.querySelector(".cell-status").innerText;
+                        const status = inline_status = linha.querySelector(".cell-status").innerText;
                         if (status.includes("Baixado")) baixados++;
                         else pendentes++;
                     }
@@ -696,7 +696,7 @@
                     linhaSendoEditada = linha;
 
                     document.getElementById("modalPrev").value = linha.querySelector(".cell-prev").innerText;
-                    document.getElementById("modalDepto").value = linha.querySelector(".cell-depto").innerText;
+                    document.getElementById("modalDepto").value = inline_depto = linha.querySelector(".cell-depto").innerText;
                     document.getElementById("modalEspecie").value = linha.querySelector(".cell-especie").innerText;
                     document.getElementById("modalCodigo").value = linha.querySelector(".cell-codigo").innerText;
                     document.getElementById("modalDesc").value = linha.querySelector(".cell-desc").innerText;
