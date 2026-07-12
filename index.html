@@ -244,7 +244,7 @@
         .btn-edit {
             background: none;
             border: none;
-            color: #b45309;
+            color: #4f83e2;
             font-weight: 600;
             cursor: pointer;
         }
@@ -252,7 +252,7 @@
         .btn-delete {
             background: none;
             border: none;
-            color: #64748b;
+            color: #ef4444;
             cursor: pointer;
             font-size: 16px;
         }
@@ -506,7 +506,7 @@
                         <td class="cell-codigo">619205318003</td>
                         <td class="cell-desc text-muted">Produto não cadastrado</td>
                         <td class="cell-qtd center text-bold">1</td>
-                        <td class="center"><button class="btn-foto-trigger">📷</button></td>
+                        <td class="center cell-foto"><button class="btn-foto-trigger">📷</button></td>
                         <td class="cell-status"><span class="status-badge status-pending">Pendente</span></td>
                         <td>
                             <div class="actions-cell">
@@ -522,7 +522,7 @@
                         <td class="cell-codigo">7891097018220</td>
                         <td class="cell-desc">Leite Uht Batavo 1l Semi Desnatado</td>
                         <td class="cell-qtd center text-bold">6</td>
-                        <td class="center"><button class="btn-foto-trigger">📷</button></td>
+                        <td class="center cell-foto"><button class="btn-foto-trigger">📷</button></td>
                         <td class="cell-status"><span class="status-badge status-pending">Pendente</span></td>
                         <td>
                             <div class="actions-cell">
@@ -565,7 +565,7 @@
     <!-- MODAL DE VISUALIZAÇÃO GRANDE DA FOTO -->
     <div id="imageViewerModal" class="image-viewer-modal">
         <div class="image-viewer-content">
-            <img id="viewerImageTarget" src="" alt="Visualização expandida do item">
+            <img id="viewerImageTarget" src="" alt="Visualização expandida">
         </div>
         <div class="image-viewer-actions">
             <button class="btn-change-image" id="btnViewerAlterar">Trocar Foto</button>
@@ -604,14 +604,17 @@
             const tableBody = document.querySelector("#produtosTable tbody");
             const selectSetor = document.getElementById("filtroSetor");
 
-            // --- SINCRONIZAÇÃO AUTOMÁTICA DOS SETORES ---
+            // --- 1. SINCRONIZAÇÃO AUTOMÁTICA DOS SETORES ---
             function sincronizarFiltroSetores() {
                 const linhas = tableBody.querySelectorAll("tr");
                 let setoresExistentes = new Set();
 
                 linhas.forEach(linha => {
-                    const setor = linha.querySelector(".cell-setor").innerText.trim();
-                    if(setor) setoresExistentes.add(setor);
+                    const celulaSetor = linha.querySelector(".cell-setor");
+                    if(celulaSetor) {
+                        const setor = celulaSetor.innerText.trim();
+                        if(setor) setoresExistentes.add(setor);
+                    }
                 });
 
                 selectSetor.innerHTML = '<option value="">Todos os setores</option>';
@@ -623,7 +626,7 @@
                 });
             }
 
-            // --- SISTEMA DE FILTRAGEM ---
+            // --- 2. SISTEMA DE FILTRAGEM CORRIGIDO ---
             function executarFiltros() {
                 const fFiscal = document.getElementById("filtroFiscal").value.toLowerCase();
                 const fSetor = selectSetor.value.toLowerCase();
@@ -631,7 +634,7 @@
                 const linhas = tableBody.querySelectorAll("tr");
 
                 linhas.forEach(linha => {
-                    const txtFiscal = lineElement = linha.querySelector(".cell-fiscal").innerText.toLowerCase();
+                    const txtFiscal = linha.querySelector(".cell-fiscal").innerText.toLowerCase();
                     const txtSetor = linha.querySelector(".cell-setor").innerText.toLowerCase();
                     const txtCodigo = linha.querySelector(".cell-codigo").innerText.toLowerCase();
 
@@ -644,11 +647,11 @@
                 atualizarContadores();
             }
 
-            document.getElementById("filtroFiscal").addEventListener("input", executingFilters => executarFiltros());
+            document.getElementById("filtroFiscal").addEventListener("input", executarFiltros);
             selectSetor.addEventListener("change", executarFiltros);
             document.getElementById("filtroCodigo").addEventListener("input", executarFiltros);
 
-            // --- ATUALIZAR CONTADORES ---
+            // --- 3. ATUALIZAR CONTADORES ---
             function atualizarContadores() {
                 const linhas = tableBody.querySelectorAll("tr");
                 let total = 0, baixados = 0, pendentes = 0;
@@ -667,10 +670,11 @@
                 document.getElementById("cont-pendentes").innerText = pendentes;
             }
 
-            // --- EVENTOS DA TABELA PRINCIPAL ---
+            // --- 4. EVENTOS DA TABELA PRINCIPAL ---
             tableBody.addEventListener("click", function (event) {
                 const target = event.target;
                 const linha = target.closest("tr");
+                if (!linha) return;
 
                 // Botão Editar dados básicos
                 if (target.classList.contains("btn-edit")) {
@@ -686,7 +690,7 @@
                     modalEdicao.style.display = "flex";
                 }
 
-                // Ação ao interagir com o campo Foto
+                // Ação ao interagir com o campo Foto (Botão de Câmera)
                 if (target.classList.contains("btn-foto-trigger")) {
                     celulaFotoSendoAlterada = target.closest("td");
                     fileInput.click();
@@ -708,7 +712,7 @@
                     }
                 }
 
-                // Botão Baixar -> Gera Preview
+                // Botão Baixar -> Altera Status e Gera Preview
                 if (target.classList.contains("btn-baixar")) {
                     linha.querySelector(".cell-status").innerHTML = `<span class="status-badge status-success">Baixado</span>`;
                     atualizarContadores();
