@@ -1,142 +1,464 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2575.7">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px 'Helvetica Neue'; -webkit-text-stroke: #000000}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px 'Helvetica Neue'; -webkit-text-stroke: #000000; min-height: 15.0px}
-    span.s1 {font-kerning: none}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProdControl - Gerenciamento de Produtos</title>
+    <!-- Google Fonts para tipografia limpa -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            color: #333;
+            padding: 20px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            padding: 15px 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            margin-bottom: 20px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            background-color: #4f83e2;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .logo-text h1 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .logo-text p {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #94a3b8;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-header {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            color: #64748b;
+            transition: all 0.2s;
+        }
+
+        .btn-header.active {
+            background: #fff;
+            color: #1e293b;
+            border-color: #cbd5e1;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            font-weight: 600;
+        }
+
+        /* --- CONTAINER PRINCIPAL DOS FILTROS E TABELA --- */
+        .main-card {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+            padding: 20px;
+            border: 1px solid #edf2f7;
+        }
+
+        /* --- FILTROS --- */
+        .filters-row {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .input-group {
+            position: relative;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .input-group span {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 10px 12px 10px 35px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #334155;
+            background-color: #fff;
+            outline: none;
+        }
+
+        .input-group select {
+            padding-left: 15px;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 15px;
+            font-size: 14px;
+            color: #64748b;
+            align-items: center;
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        /* --- SUB-BARRA (CONTADORES) --- */
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .badges-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .badge-info {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #475569;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .badge-info strong {
+            color: #1e293b;
+        }
+
+        .action-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        .btn-refresh {
+            background: #fff;
+            border: 1px solid #cbd5e1;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #1e293b;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* --- TABELA --- */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 13.5px;
+        }
+
+        th {
+            background-color: #1e293b;
+            color: #f8fafc;
+            text-transform: uppercase;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            padding: 14px 16px;
+        }
+
+        th.center, td.center {
+            text-align: center;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #334155;
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .text-muted {
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        .text-bold {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        /* Status Badge */
+        .status-pending {
+            background-color: #fffbeb;
+            color: #b45309;
+            border: 1px solid #fef3c7;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status-pending::before {
+            content: "•";
+            color: #f59e0b;
+            font-size: 16px;
+        }
+
+        /* Botões de Ação na Tabela */
+        .actions-cell {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .btn-edit {
+            background: none;
+            border: none;
+            color: #b45309;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-delete {
+            background: none;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn-baixar {
+            background-color: #f0fdf4;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+    </style>
 </head>
 <body>
-<p class="p1"><span class="s1">&lt;!DOCTYPE html&gt;</span></p>
-<p class="p1"><span class="s1">&lt;html lang="pt-BR"&gt;</span></p>
-<p class="p1"><span class="s1">&lt;head&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;title&gt;Gerenciamento de Recebimento - Notas Fiscais&lt;/title&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;style&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>* { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>body { background-color: #f8f9fa; color: #333; padding: 24px; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.container { max-width: 1400px; margin: 0 auto; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.title-area h1 { font-size: 22px; font-weight: 700; display: flex; align-items: center; gap: 8px; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.title-area p { font-size: 14px; color: #666; margin-top: 4px; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.actions-header { display: flex; gap: 12px; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.btn { padding: 10px 16px; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.btn-secondary { background-color: #ffffff; color: #333; border: 1px solid #cccccc; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.btn-primary { background-color: #1e62be; color: #ffffff; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.card h3 { font-size: 11px; text-transform: uppercase; color: #888; margin-bottom: 8px; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.card p { font-size: 22px; font-weight: 700; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>#txtTotalNotas { color: #1e62be; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>#txtNaoAcatadas { color: #dc3545; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>#txtAcatadas { color: #198754; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.filters-section { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; font-size: 14px; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.btn-clear { background: transparent; border: 1px solid #cccccc; padding: 6px 12px; border-radius: 4px; cursor: pointer; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.table-container { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.table-info { margin-bottom: 12px; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.table-info .count { font-size: 14px; color: #666; margin-bottom: 4px; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.table-info .instruction { font-size: 12px; color: #999; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.custom-table { width: 100%; border-collapse: collapse; font-size: 14px; text-align: left; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.custom-table th { background-color: #f8f9fa; color: #555; font-weight: 600; padding: 10px 12px; border-bottom: 1px solid #e2e8f0; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.custom-table td { padding: 14px 12px; border-bottom: 1px solid #e2e8f0; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.badge-success { background-color: #e6f7ed; color: #198754; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.actions-cell { display: flex; gap: 12px; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.btn-action { background: none; border: none; cursor: pointer; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/head&gt;</span></p>
-<p class="p1"><span class="s1">&lt;body&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">&lt;div class="container"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;header&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="title-area"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;h1&gt;📋 Notas Fiscais&lt;/h1&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;p&gt;Gerenciamento de recebimento&lt;/p&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="actions-header"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;button class="btn btn-secondary"&gt;⬇ Exportar CSV&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;button class="btn btn-primary"&gt;+ Nova Nota Fiscal&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/header&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;section class="cards"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="card"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;h3&gt;Total de Notas&lt;/h3&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;p id="txtTotalNotas"&gt;1&lt;/p&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="card"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;h3&gt;Valor Total&lt;/h3&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;p id="txtValorTotal"&gt;R$ 1.119,13&lt;/p&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="card"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;h3&gt;Não Acatadas&lt;/h3&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;p id="txtNaoAcatadas"&gt;0&lt;/p&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="card"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;h3&gt;Acatadas&lt;/h3&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;p id="txtAcatadas"&gt;1&lt;/p&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;section class="filters-section"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div&gt;▼ Filtros&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;button class="btn-clear"&gt;✕ Limpar filtros&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;section class="table-container"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="table-info"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="count"&gt;1 nota encontrada&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="instruction"&gt;≡ Arraste os cabeçalhos para reordenar as colunas&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;table class="custom-table"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;thead&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;tr&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;th&gt;≡ Data ↕&lt;/th&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;th&gt;≡ Fornecedor ↕&lt;/th&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;th&gt;≡ NF ↕&lt;/th&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;th&gt;≡ Valor ↕&lt;/th&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;th&gt;≡ Chegada&lt;/th&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;th&gt;≡ Saída&lt;/th&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;th&gt;≡ Temp.&lt;/th&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;th&gt;≡ Conferente ↕&lt;/th&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;th&gt;≡ Prevenção&lt;/th&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;th&gt;≡ Status ↕&lt;/th&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;th&gt;≡ Observação&lt;/th&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;th&gt;Ações&lt;/th&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/tr&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/thead&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;tbody&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;tr&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;td&gt;29/06/2026&lt;/td&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;td&gt;Apol&lt;/td&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;td&gt;&lt;strong&gt;61.975&lt;/strong&gt;&lt;/td&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;td&gt;&lt;strong&gt;R$ 1.119,13&lt;/strong&gt;&lt;/td&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;td&gt;07:06&lt;/td&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;td&gt;07:10&lt;/td&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;td&gt;-&lt;/td&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;td&gt;Amanda&lt;/td&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;td&gt;Lucas&lt;/td&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;td&gt;&lt;span class="badge badge-success"&gt;ACATADA&lt;/span&gt;&lt;/td&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;td&gt;-&lt;/td&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;td class="actions-cell"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;button class="btn-action"&gt;✏️&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;button class="btn-action"&gt;🗑️&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/td&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/tr&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/tbody&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/table&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">&lt;/body&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/html&gt;</span></p>
+
+    <!-- CABEÇALHO -->
+    <header>
+        <div class="logo-container">
+            <div class="logo-icon">📦</div>
+            <div class="logo-text">
+                <h1>ProdControl</h1>
+                <p>Gerenciamento de Produtos</p>
+            </div>
+        </div>
+        <div class="header-buttons">
+            <button class="btn-header">Cadastrar</button>
+            <button class="btn-header active">Visualizar</button>
+        </div>
+    </header>
+
+    <!-- CARD PRINCIPAL -->
+    <main class="main-card">
+        
+        <!-- BARRA DE FILTROS -->
+        <div class="filters-row">
+            <div class="input-group">
+                <span>🔍</span>
+                <input type="text" placeholder="Fiscal" value="Fiscal">
+            </div>
+            
+            <div class="input-group" style="flex: 1.5;">
+                <select>
+                    <option>Todos os setores</option>
+                    <option>Matéria-Prima Rotisserie</option>
+                    <option>Perda Avaria</option>
+                    <option>Matéria-Prima Frios</option>
+                </select>
+            </div>
+
+            <div class="input-group" style="flex: 1.5;">
+                <span>🔍</span>
+                <input type="text" placeholder="Código de barras">
+            </div>
+
+            <div class="checkbox-group">
+                <label><input type="checkbox"> Baixados</label>
+                <label><input type="checkbox" checked> Pendentes</label>
+            </div>
+        </div>
+
+        <!-- CONTADORES E ATUALIZAR -->
+        <div class="summary-row">
+            <div class="badges-container">
+                <div class="badge-info">Total <strong>3</strong></div>
+                <div class="badge-info">✅ Baixados <strong>0</strong></div>
+                <div class="badge-info">⏳ Pendentes <strong>3</strong></div>
+                <div class="badge-info">📦 Qtd. Total <strong>10,054</strong></div>
+            </div>
+            <div class="action-right">
+                <span>3 registros</span>
+                <button class="btn-refresh">🔄 Atualizar</button>
+            </div>
+        </div>
+
+        <!-- TABELA DE DADOS -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fiscal</th>
+                        <th>Setor</th>
+                        <th>Código</th>
+                        <th>Descrição</th>
+                        <th class="center">Qtd</th>
+                        <th class="center">Foto</th>
+                        <th>Status</th>
+                        <th>Data/Hora</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Linha 1 -->
+                    <tr>
+                        <td>Celso</td>
+                        <td class="text-bold">Matéria-Prima Rotisserie</td>
+                        <td>619205318003</td>
+                        <td class="text-muted">Produto não cadastrado</td>
+                        <td class="center text-bold">1</td>
+                        <td class="center">📷</td>
+                        <td><span class="status-pending">Pendente</span></td>
+                        <td>21/06/2026, 07:44:32</td>
+                        <td>
+                            <div class="actions-cell">
+                                <button class="btn-edit">✏️ Editar</button>
+                                <button class="btn-delete">🗑️</button>
+                                <button class="btn-baixar">✓ Baixar</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Linha 2 -->
+                    <tr>
+                        <td>João carlos</td>
+                        <td class="text-bold">Perda Avaria</td>
+                        <td>7891097018220</td>
+                        <td>Leite Uht Batavo 1l Semi Desnatado</td>
+                        <td class="center text-bold">6</td>
+                        <td class="center">📷</td>
+                        <td><span class="status-pending">Pendente</span></td>
+                        <td>17/06/2026, 17:25:50</td>
+                        <td>
+                            <div class="actions-cell">
+                                <button class="btn-edit">✏️ Editar</button>
+                                <button class="btn-delete">🗑️</button>
+                                <button class="btn-baixar">✓ Baixar</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Linha 3 -->
+                    <tr>
+                        <td>João</td>
+                        <td class="text-bold">Matéria-Prima Frios</td>
+                        <td>2234400192074</td>
+                        <td class="text-muted">Produto não cadastrado</td>
+                        <td class="center text-bold">3.054</td>
+                        <td class="center">📷</td>
+                        <td><span class="status-pending">Pendente</span></td>
+                        <td>13/06/2026, 14:20:49</td>
+                        <td>
+                            <div class="actions-cell">
+                                <button class="btn-edit">✏️ Editar</button>
+                                <button class="btn-delete">🗑️</button>
+                                <button class="btn-baixar">✓ Baixar</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+
 </body>
 </html>
