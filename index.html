@@ -247,6 +247,7 @@
             color: #b45309;
             font-weight: 600;
             cursor: pointer;
+            font-size: 13.5px;
         }
 
         .btn-delete {
@@ -480,8 +481,10 @@
             <table id="produtosTable">
                 <thead>
                     <tr>
+                        <th>Data</th> <!-- Nova Coluna Inserida aqui -->
                         <th>Prevenção</th>
                         <th>Departamento</th>
+                        <th>Documento</th>
                         <th>Espécie</th>
                         <th>Código</th>
                         <th>Descrição</th>
@@ -493,8 +496,10 @@
                 </thead>
                 <tbody>
                     <tr>
+                        <td class="cell-data">12/07/2026</td> <!-- Data exemplo preenchida -->
                         <td class="cell-prev">Celso</td>
                         <td class="cell-depto text-bold">Matéria-Prima Rotisserie</td>
+                        <td class="cell-doc">-</td>
                         <td class="cell-especie">-</td>
                         <td class="cell-codigo">619205318003</td>
                         <td class="cell-desc">Produto não cadastrado</td>
@@ -509,8 +514,10 @@
                         </td>
                     </tr>
                     <tr>
+                        <td class="cell-data">12/07/2026</td> <!-- Data exemplo preenchida -->
                         <td class="cell-prev">João carlos</td>
                         <td class="cell-depto text-bold">Perda Avaria</td>
+                        <td class="cell-doc">-</td>
                         <td class="cell-especie">-</td>
                         <td class="cell-codigo">7891097018220</td>
                         <td class="cell-desc">Leite Uht Batavo 1l Semi Desnatado</td>
@@ -535,8 +542,10 @@
     <div id="editModal" class="modal">
         <div class="modal-content">
             <h3 id="modalTitulo">Editar Produto</h3>
+            <div class="modal-field"><label>Data</label><input type="date" id="modalData"></div> <!-- Campo Data incluído -->
             <div class="modal-field"><label>Prevenção</label><input type="text" id="modalPrev"></div>
             <div class="modal-field"><label>Departamento</label><input type="text" id="modalDepto"></div>
+            <div class="modal-field"><label>Documento</label><input type="text" id="modalDoc"></div>
             <div class="modal-field"><label>Espécie</label><input type="text" id="modalEspecie"></div>
             <div class="modal-field"><label>Código</label><input type="text" id="modalCodigo"></div>
             <div class="modal-field"><label>Descrição</label><input type="text" id="modalDesc"></div>
@@ -599,13 +608,30 @@
             const tableBody = document.querySelector("#produtosTable tbody");
             const selectDepto = document.getElementById("filtroDepto");
 
+            // Auxiliar para formatar data do input type="date" (AAAA-MM-DD) para padrão brasileiro (DD/MM/AAAA)
+            function formatarDataParaBR(dataString) {
+                if(!dataString) return "-";
+                if(dataString.includes("/")) return dataString; // Já formatada
+                const partes = dataString.split("-");
+                if(partes.length === 3) return `${partes[2]}/${partes[1]}/${partes[0]}`;
+                return dataString;
+            }
+
+            // Auxiliar para formatar padrão brasileiro (DD/MM/AAAA) para input type="date" (AAAA-MM-DD)
+            function formatarDataParaInput(dataString) {
+                if(!dataString || dataString === "-") return "";
+                const partes = dataString.split("/");
+                if(partes.length === 3) return `${partes[2]}-${partes[1]}-${partes[0]}`;
+                return "";
+            }
+
             // --- SINCRONIZAÇÃO AUTOMÁTICA DOS DEPARTAMENTOS NO FILTRO ---
             function sincronizarFiltroDeptos() {
                 const linhas = tableBody.querySelectorAll("tr");
                 let deptosExistentes = new Set();
 
                 linhas.forEach(linha => {
-                    const depto = inline_depto = linha.querySelector(".cell-depto").innerText.trim();
+                    const depto = linha.querySelector(".cell-depto").innerText.trim();
                     if(depto) deptosExistentes.add(depto);
                 });
 
@@ -619,7 +645,7 @@
             }
 
             // --- SISTEMA DE FILTRAGEM ---
-            function executarFiltros() {
+            function ejecutarFiltros() {
                 const fPrev = document.getElementById("filtroPrev").value.toLowerCase();
                 const fDepto = selectDepto.value.toLowerCase();
                 const fCodigo = document.getElementById("filtroCodigo").value.toLowerCase();
@@ -639,9 +665,9 @@
                 atualizarContadores();
             }
 
-            document.getElementById("filtroPrev").addEventListener("input", () => executarFiltros());
-            selectDepto.addEventListener("change", executarFiltros);
-            document.getElementById("filtroCodigo").addEventListener("input", executarFiltros);
+            document.getElementById("filtroPrev").addEventListener("input", () => ejecutarFiltros());
+            selectDepto.addEventListener("change", ejecutarFiltros);
+            document.getElementById("filtroCodigo").addEventListener("input", ejecutarFiltros);
 
             // --- ATUALIZAR CONTADORES ---
             function atualizarContadores() {
@@ -651,7 +677,7 @@
                 linhas.forEach(linha => {
                     if (linha.style.display !== "none") {
                         total++;
-                        const status = inline_status = linha.querySelector(".cell-status").innerText;
+                        const status = linha.querySelector(".cell-status").innerText;
                         if (status.includes("Baixado")) baixados++;
                         else pendentes++;
                     }
@@ -667,8 +693,10 @@
                 modoFormulario = "INCLUIR";
                 modalTitulo.innerText = "Incluir Novo Registro";
                 
+                document.getElementById("modalData").value = "";
                 document.getElementById("modalPrev").value = "";
                 document.getElementById("modalDepto").value = "";
+                document.getElementById("modalDoc").value = "";
                 document.getElementById("modalEspecie").value = "";
                 document.getElementById("modalCodigo").value = "";
                 document.getElementById("modalDesc").value = "";
@@ -680,7 +708,6 @@
 
             // --- BOTÃO BAIXAR SUPERIOR (GERA PREVIEW DO RELATÓRIO) ---
             document.getElementById("btnBaixarTop").addEventListener("click", function () {
-                // Altera o status de todas as linhas VISÍVEIS para Baixado ao clicar no botão global
                 const linhas = tableBody.querySelectorAll("tr");
                 linhas.forEach(linha => {
                     if (linha.style.display !== "none") {
@@ -692,7 +719,6 @@
                 const tabelaOriginal = document.getElementById("produtosTable");
                 const tabelaClonada = tabelaOriginal.cloneNode(true);
                 
-                // Remove a coluna de ações no PDF gerado
                 tabelaClonada.querySelectorAll("tr").forEach(row => {
                     if(row.lastElementChild) row.lastElementChild.remove();
                 });
@@ -708,14 +734,15 @@
                 const target = event.target;
                 const linha = target.closest("tr");
 
-                // Botão Editar dados básicos
                 if (target.classList.contains("btn-edit")) {
                     modoFormulario = "EDITAR";
                     modalTitulo.innerText = "Editar Produto";
                     linhaSendoEditada = linha;
 
+                    document.getElementById("modalData").value = formatarDataParaInput(linha.querySelector(".cell-data").innerText);
                     document.getElementById("modalPrev").value = linha.querySelector(".cell-prev").innerText;
-                    document.getElementById("modalDepto").value = inline_depto = linha.querySelector(".cell-depto").innerText;
+                    document.getElementById("modalDepto").value = linha.querySelector(".cell-depto").innerText;
+                    document.getElementById("modalDoc").value = linha.querySelector(".cell-doc").innerText;
                     document.getElementById("modalEspecie").value = linha.querySelector(".cell-especie").innerText;
                     document.getElementById("modalCodigo").value = linha.querySelector(".cell-codigo").innerText;
                     document.getElementById("modalDesc").value = linha.querySelector(".cell-desc").innerText;
@@ -727,20 +754,17 @@
                     modalEdicao.style.display = "flex";
                 }
 
-                // Ação ao interagir com o campo Foto
                 if (target.classList.contains("btn-foto-trigger")) {
                     celulaFotoSendoAlterada = target.closest("td");
                     fileInput.click();
                 }
 
-                // Clique na miniatura da imagem (Abre Visualização Grande)
                 if (target.classList.contains("thumb-img")) {
                     celulaFotoSendoAlterada = target.closest("td");
                     viewerImageTarget.src = target.src;
                     modalViewer.style.display = "flex";
                 }
 
-                // Botão Excluir item
                 if (target.classList.contains("btn-delete")) {
                     if (confirm("Deseja excluir este item?")) {
                         linha.remove();
@@ -750,7 +774,6 @@
                 }
             });
 
-            // Processamento do upload da Imagem e conversão em miniatura
             fileInput.addEventListener("change", function () {
                 if (this.files && this.files[0] && celulaFotoSendoAlterada) {
                     const reader = new FileReader();
@@ -761,13 +784,13 @@
                 }
             });
 
-            // Fechar modal de formulário
             document.getElementById("btnFecharModal").addEventListener("click", () => modalEdicao.style.display = "none");
 
-            // Salvar dados (Inclusão ou Edição)
             document.getElementById("btnSalvarModal").addEventListener("click", function () {
+                const dataVal = formatarDataParaBR(document.getElementById("modalData").value);
                 const prevVal = document.getElementById("modalPrev").value || "-";
                 const deptoVal = document.getElementById("modalDepto").value || "-";
+                const docVal = document.getElementById("modalDoc").value || "-";
                 const especieVal = document.getElementById("modalEspecie").value || "-";
                 const codigoVal = document.getElementById("modalCodigo").value || "-";
                 const descVal = document.getElementById("modalDesc").value || "Produto não cadastrado";
@@ -779,8 +802,10 @@
                     : `<span class="status-badge status-pending">Pendente</span>`;
 
                 if (modoFormulario === "EDITAR" && linhaSendoEditada) {
+                    linhaSendoEditada.querySelector(".cell-data").innerText = dataVal;
                     linhaSendoEditada.querySelector(".cell-prev").innerText = prevVal;
                     linhaSendoEditada.querySelector(".cell-depto").innerText = deptoVal;
+                    linhaSendoEditada.querySelector(".cell-doc").innerText = docVal;
                     linhaSendoEditada.querySelector(".cell-especie").innerText = especieVal;
                     linhaSendoEditada.querySelector(".cell-codigo").innerText = codigoVal;
                     linhaSendoEditada.querySelector(".cell-desc").innerText = descVal;
@@ -789,8 +814,10 @@
                 } else if (modoFormulario === "INCLUIR") {
                     const novaLinha = document.createElement("tr");
                     novaLinha.innerHTML = `
+                        <td class="cell-data">${dataVal}</td>
                         <td class="cell-prev">${prevVal}</td>
                         <td class="cell-depto text-bold">${deptoVal}</td>
+                        <td class="cell-doc">${docVal}</td>
                         <td class="cell-especie">${especieVal}</td>
                         <td class="cell-codigo">${codigoVal}</td>
                         <td class="cell-desc">${descVal}</td>
@@ -812,17 +839,14 @@
                 atualizarContadores();
             });
 
-            // CONTROLES DO VISUALIZADOR DE FOTO EXPANDIDA
             document.getElementById("btnViewerFechar").addEventListener("click", () => modalViewer.style.display = "none");
             document.getElementById("btnViewerAlterar").addEventListener("click", () => {
                 modalViewer.style.display = "none";
                 fileInput.click();
             });
 
-            // Fechar Tela de Preview do Relatório
             document.getElementById("btnFecharPreview").addEventListener("click", () => modalPreview.style.display = "none");
 
-            // Disparar download real do PDF
             document.getElementById("btnConfirmarDownload").addEventListener("click", function () {
                 const elementoParaImprimir = document.getElementById("espaco-impressao-pdf");
                 const configPDF = {
@@ -838,7 +862,7 @@
                 });
             });
 
-            // Configuração Inicial de Carga
+            // Execuções iniciais obrigatórias
             sincronizarFiltroDeptos();
             atualizarContadores();
         });
