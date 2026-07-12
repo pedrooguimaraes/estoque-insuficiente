@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ProdControl - Gerenciamento de Produtos</title>
-    <!-- Google Fonts para tipografia limpa -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -20,7 +19,6 @@
             padding: 20px;
         }
 
-        /* --- HEADER --- */
         header {
             display: flex;
             justify-content: space-between;
@@ -89,7 +87,6 @@
             font-weight: 600;
         }
 
-        /* --- CONTAINER PRINCIPAL DOS FILTROS E TABELA --- */
         .main-card {
             background: #ffffff;
             border-radius: 12px;
@@ -98,7 +95,6 @@
             border: 1px solid #edf2f7;
         }
 
-        /* --- FILTROS --- */
         .filters-row {
             display: flex;
             gap: 15px;
@@ -157,7 +153,6 @@
             cursor: pointer;
         }
 
-        /* --- SUB-BARRA (CONTADORES) --- */
         .summary-row {
             display: flex;
             justify-content: space-between;
@@ -209,7 +204,6 @@
             gap: 6px;
         }
 
-        /* --- TABELA --- */
         .table-container {
             width: 100%;
             overflow-x: auto;
@@ -259,7 +253,6 @@
             color: #1e293b;
         }
 
-        /* Status Badge */
         .status-pending {
             background-color: #fffbeb;
             color: #b45309;
@@ -279,7 +272,6 @@
             font-size: 16px;
         }
 
-        /* Botões de Ação na Tabela */
         .actions-cell {
             display: flex;
             gap: 12px;
@@ -324,7 +316,6 @@
 </head>
 <body>
 
-    <!-- CABEÇALHO -->
     <header>
         <div class="logo-container">
             <div class="logo-icon">📦</div>
@@ -334,58 +325,54 @@
             </div>
         </div>
         <div class="header-buttons">
-            <button class="btn-header">Cadastrar</button>
+            <button class="btn-header" onclick="alert('Funcionalidade Cadastrar clicada!')">Cadastrar</button>
             <button class="btn-header active">Visualizar</button>
         </div>
     </header>
 
-    <!-- CARD PRINCIPAL -->
     <main class="main-card">
         
-        <!-- BARRA DE FILTROS -->
         <div class="filters-row">
             <div class="input-group">
                 <span>🔍</span>
-                <input type="text" placeholder="Fiscal" value="Fiscal">
+                <input type="text" id="filterFiscal" placeholder="Filtrar Fiscal..." oninput="filtrarTabela()">
             </div>
             
             <div class="input-group" style="flex: 1.5;">
-                <select>
-                    <option>Todos os setores</option>
-                    <option>Matéria-Prima Rotisserie</option>
-                    <option>Perda Avaria</option>
-                    <option>Matéria-Prima Frios</option>
+                <select id="filterSetor" onchange="filtrarTabela()">
+                    <option value="">Todos os setores</option>
+                    <option value="Matéria-Prima Rotisserie">Matéria-Prima Rotisserie</option>
+                    <option value="Perda Avaria">Perda Avaria</option>
+                    <option value="Matéria-Prima Frios">Matéria-Prima Frios</option>
                 </select>
             </div>
 
             <div class="input-group" style="flex: 1.5;">
                 <span>🔍</span>
-                <input type="text" placeholder="Código de barras">
+                <input type="text" id="filterCodigo" placeholder="Código de barras..." oninput="filtrarTabela()">
             </div>
 
             <div class="checkbox-group">
-                <label><input type="checkbox"> Baixados</label>
-                <label><input type="checkbox" checked> Pendentes</label>
+                <label><input type="checkbox" id="chkBaixados" onchange="alert('Filtro alterado')"> Baixados</label>
+                <label><input type="checkbox" id="chkPendentes" checked onchange="alert('Filtro alterado')"> Pendentes</label>
             </div>
         </div>
 
-        <!-- CONTADORES E ATUALIZAR -->
         <div class="summary-row">
             <div class="badges-container">
-                <div class="badge-info">Total <strong>3</strong></div>
+                <div class="badge-info">Total <strong id="totalRegs">3</strong></div>
                 <div class="badge-info">✅ Baixados <strong>0</strong></div>
                 <div class="badge-info">⏳ Pendentes <strong>3</strong></div>
                 <div class="badge-info">📦 Qtd. Total <strong>10,054</strong></div>
             </div>
             <div class="action-right">
-                <span>3 registros</span>
-                <button class="btn-refresh">🔄 Atualizar</button>
+                <span id="txtRegistros">3 registros</span>
+                <button class="btn-refresh" onclick="window.location.reload()">🔄 Atualizar</button>
             </div>
         </div>
 
-        <!-- TABELA DE DADOS -->
         <div class="table-container">
-            <table>
+            <table id="produtosTable">
                 <thead>
                     <tr>
                         <th>Fiscal</th>
@@ -400,57 +387,54 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Linha 1 -->
                     <tr>
                         <td>Celso</td>
                         <td class="text-bold">Matéria-Prima Rotisserie</td>
                         <td>619205318003</td>
                         <td class="text-muted">Produto não cadastrado</td>
                         <td class="center text-bold">1</td>
-                        <td class="center">📷</td>
+                        <td class="center" style="cursor:pointer;" onclick="alert('Visualizar Foto')">📷</td>
                         <td><span class="status-pending">Pendente</span></td>
                         <td>21/06/2026, 07:44:32</td>
                         <td>
                             <div class="actions-cell">
-                                <button class="btn-edit">✏️ Editar</button>
-                                <button class="btn-delete">🗑️</button>
-                                <button class="btn-baixar">✓ Baixar</button>
+                                <button class="btn-edit" onclick="alert('Editar produto Celso')">✏️ Editar</button>
+                                <button class="btn-delete" onclick="if(confirm('Excluir este item?')) this.closest('tr').remove();">🗑️</button>
+                                <button class="btn-baixar" onclick="alert('Item baixado com sucesso!')">✓ Baixar</button>
                             </div>
                         </td>
                     </tr>
-                    <!-- Linha 2 -->
                     <tr>
                         <td>João carlos</td>
                         <td class="text-bold">Perda Avaria</td>
                         <td>7891097018220</td>
                         <td>Leite Uht Batavo 1l Semi Desnatado</td>
                         <td class="center text-bold">6</td>
-                        <td class="center">📷</td>
+                        <td class="center" style="cursor:pointer;" onclick="alert('Visualizar Foto')">📷</td>
                         <td><span class="status-pending">Pendente</span></td>
                         <td>17/06/2026, 17:25:50</td>
                         <td>
                             <div class="actions-cell">
-                                <button class="btn-edit">✏️ Editar</button>
-                                <button class="btn-delete">🗑️</button>
-                                <button class="btn-baixar">✓ Baixar</button>
+                                <button class="btn-edit" onclick="alert('Editar produto João carlos')">✏️ Editar</button>
+                                <button class="btn-delete" onclick="if(confirm('Excluir este item?')) this.closest('tr').remove();">🗑️</button>
+                                <button class="btn-baixar" onclick="alert('Item baixado com sucesso!')">✓ Baixar</button>
                             </div>
                         </td>
                     </tr>
-                    <!-- Linha 3 -->
                     <tr>
                         <td>João</td>
                         <td class="text-bold">Matéria-Prima Frios</td>
                         <td>2234400192074</td>
                         <td class="text-muted">Produto não cadastrado</td>
                         <td class="center text-bold">3.054</td>
-                        <td class="center">📷</td>
+                        <td class="center" style="cursor:pointer;" onclick="alert('Visualizar Foto')">📷</td>
                         <td><span class="status-pending">Pendente</span></td>
                         <td>13/06/2026, 14:20:49</td>
                         <td>
                             <div class="actions-cell">
-                                <button class="btn-edit">✏️ Editar</button>
-                                <button class="btn-delete">🗑️</button>
-                                <button class="btn-baixar">✓ Baixar</button>
+                                <button class="btn-edit" onclick="alert('Editar produto João')">✏️ Editar</button>
+                                <button class="btn-delete" onclick="if(confirm('Excluir este item?')) this.closest('tr').remove();">🗑️</button>
+                                <button class="btn-baixar" onclick="alert('Item baixado com sucesso!')">✓ Baixar</button>
                             </div>
                         </td>
                     </tr>
@@ -460,5 +444,41 @@
 
     </main>
 
+    <script>
+        function filtrarTabela() {
+            var inputFiscal = document.getElementById("filterFiscal").value.toUpperCase();
+            var inputSetor = document.getElementById("filterSetor").value.toUpperCase();
+            var inputCodigo = document.getElementById("filterCodigo").value.toUpperCase();
+            
+            var table = document.getElementById("produtosTable");
+            var tr = table.getElementsByTagName("tr");
+            var visiveis = 0;
+
+            for (var i = 1; i < tr.length; i++) {
+                var tdFiscal = tr[i].getElementsByTagName("td")[0];
+                var tdSetor = tr[i].getElementsByTagName("td")[1];
+                var tdCodigo = tr[i].getElementsByTagName("td")[2];
+                
+                if (tdFiscal && tdSetor && tdCodigo) {
+                    var txtFiscal = tdFiscal.textContent || tdFiscal.innerText;
+                    var txtSetor = tdSetor.textContent || tdSetor.innerText;
+                    var txtCodigo = tdCodigo.textContent || tdCodigo.innerText;
+                    
+                    if (
+                        txtFiscal.toUpperCase().indexOf(inputFiscal) > -1 &&
+                        (inputSetor === "" || txtSetor.toUpperCase().indexOf(inputSetor) > -1) &&
+                        txtCodigo.toUpperCase().indexOf(inputCodigo) > -1
+                    ) {
+                        tr[i].style.display = "";
+                        visiveis++;
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }       
+            }
+            document.getElementById("totalRegs").innerText = visiveis;
+            document.getElementById("txtRegistros").innerText = visiveis + " registros";
+        }
+    </script>
 </body>
 </html>
